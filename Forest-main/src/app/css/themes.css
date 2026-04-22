@@ -1,0 +1,89 @@
+/* ============================================
+   1. themes.css - 森林浴 App 主题与全局变量
+   ============================================ */
+
+:root {
+  /* --- 字体配置 --- */
+  --font-hand: 'Gaegu', 'Caveat', cursive;
+  --font-body: 'Nunito', 'Quicksand', sans-serif;
+
+  /* --- 基础共享颜色 (不随季节变化的泥土色调等) --- */
+  --soil: #A68A6B;
+  --soil-light: rgba(166, 138, 107, 0.35);
+  --soil-faint: rgba(166, 138, 107, 0.15);
+  --yellow: #F7E3AF;
+  --text-dark: #4a3728;
+  
+  /* --- 基础尺寸与投影 --- */
+  --radius: 0.625rem;
+}
+
+/* =========================================
+   默认主题 (春季) 与 Fallback
+   ========================================= */
+:root, .theme-spring {
+  --background: #fffafa; /* 极淡的樱花白 */
+  --foreground: #4a3b3f; /* 柔和深褐色 */
+  
+  --primary: #e89eb3; /* 樱花粉 */
+  --primary-foreground: #ffffff;
+  
+  /* 为了兼容旧代码中的 --fg 和 --bg 变量，建立映射 */
+  --fg: var(--primary);
+  --fg-dark: #d4183d;
+  --fg-light: rgba(232, 158, 179, 0.12);
+  --bg: var(--background);
+}
+
+/* =========================================
+   夏季主题 (夏·绿：清凉、治愈)
+   ========================================= */
+.theme-summer {
+  --background: #f4fbf7;
+  --foreground: #2d3e33;
+  
+  --primary: #5b8c74;
+  --primary-foreground: #ffffff;
+  
+  --fg: var(--primary);
+  --fg-dark: #4a7a63;
+  --fg-light: rgba(91, 140, 116, 0.12);
+  --bg: var(--background);
+}
+
+/* =========================================
+   秋季主题 (秋·枫：温暖、浓烈)
+   ========================================= */
+.theme-autumn {
+  --background: #fcf8f4;
+  --foreground: #4a3320;
+  
+  --primary: #cf6f42;
+  --primary-foreground: #ffffff;
+  
+  --fg: var(--primary);
+  --fg-dark: #b35930;
+  --fg-light: rgba(207, 111, 66, 0.12);
+  --bg: var(--background);
+}
+
+/* =========================================
+   冬季主题 (冬·雪：宁静、冷峻)
+   ========================================= */
+.theme-winter {
+  --background: #f5f8fa;
+  --foreground: #2c3e50;
+  
+  --primary: #6c8ca6;
+  --primary-foreground: #ffffff;
+  
+  --fg: var(--primary);
+  --fg-dark: #56728a;
+  --fg-light: rgba(108, 140, 166, 0.12);
+  --bg: var(--background);
+}
+
+/* 全局主题过渡动画 */
+body {
+  transition: background-color 0.6s ease, color 0.6s ease;
+}

@@ -1,0 +1,237 @@
+/* ============================================
+   3. components.css - 公共 UI 组件
+   包含：按钮、卡片、表单、便签、标签等
+   ============================================ */
+
+/* === BUTTONS (按钮) === */
+.btn-primary {
+  background: var(--fg);
+  color: #fff;
+  border: none;
+  border-radius: 40px 12px 40px 12px;
+  padding: 13px 30px;
+  font-family: var(--font-body); /* 已替换为变量 */
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1); /* 优化了阴影适配多主题 */
+  transition: background 0.2s, transform 0.18s, box-shadow 0.18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary:hover {
+  background: var(--fg-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.08);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--fg);
+  border: 2px solid var(--fg);
+  border-radius: 40px 12px 40px 12px;
+  padding: 11px 28px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-secondary:hover {
+  background: var(--fg-light); /* 替换了硬编码颜色 */
+  transform: translateY(-2px);
+}
+
+.btn-small {
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 30px 8px 30px 8px;
+}
+
+.fab-btn {
+  position: fixed;
+  bottom: 36px;
+  right: 36px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--fg);
+  color: #fff;
+  font-size: 26px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 200;
+  line-height: 1;
+}
+.fab-btn:hover {
+  background: var(--fg-dark);
+  transform: scale(1.08) rotate(15deg);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.2);
+}
+
+/* === CARDS (卡片) === */
+.hand-card {
+  background: var(--bg);
+  border: 2px dashed var(--soil-light);
+  border-radius: 24px 8px 24px 8px;
+  padding: 24px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.hand-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px var(--fg-light); /* 替换了硬编码颜色 */
+  border-color: var(--soil);
+}
+
+.guide-card {
+  background: var(--bg);
+  border: 2px dashed var(--soil-light);
+  border-radius: 20px 6px 20px 6px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+.guide-card:hover {
+  transform: translateX(6px);
+  box-shadow: -6px 0 0 var(--fg);
+  border-color: var(--soil);
+}
+.guide-icon-box {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 50%;
+  background: var(--fg-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border: 2px dashed var(--fg);
+  transition: background 0.2s;
+}
+.guide-card:hover .guide-icon-box { 
+  filter: brightness(0.95); /* 用滤镜加深，替代了原有的写死颜色 */
+}
+
+/* === FORM (表单) === */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  font-family: var(--font-hand);
+  font-size: 18px;
+  color: var(--fg);
+  display: block;
+  margin-bottom: 5px;
+}
+.form-input {
+  width: 100%;
+  background: #fff;
+  border: 2px dashed var(--soil-light);
+  border-radius: 12px 4px 12px 4px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color 0.2s ease, border-style 0.2s;
+  resize: vertical;
+}
+.form-input:focus {
+  border-color: var(--fg);
+  border-style: solid;
+}
+.form-input::placeholder { color: var(--soil-light); opacity: 1; }
+.inline-form {
+  background: var(--bg);
+  border: 2px dashed var(--soil-light);
+  border-radius: 20px 6px 20px 6px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.inline-form.hidden { display: none; }
+
+/* === STICKY NOTES (便签) === */
+.sticky-note {
+  background: var(--yellow);
+  padding: 18px 16px;
+  border-radius: 4px 12px 4px 4px;
+  box-shadow: 3px 3px 8px var(--soil-faint);
+  font-family: var(--font-hand);
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--text-dark);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.sticky-note:hover {
+  transform: rotate(0deg) translateY(-4px) !important;
+  box-shadow: 5px 6px 14px var(--soil-light) !important;
+}
+.sticky-pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+}
+.sticky-user {
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: var(--soil);
+  margin-top: 8px;
+  display: block;
+  font-weight: 600;
+}
+
+/* === TAGS & BADGES (标签与徽章) === */
+.navbar-tag {
+  background: var(--yellow);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+  font-family: var(--font-body);
+}
+.feature-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--fg-light);
+  border: 1px solid var(--fg);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 4px 4px 4px 0;
+}
+.num-badge {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  border: 2px dashed var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-hand);
+  font-size: 24px;
+  color: var(--fg);
+}
