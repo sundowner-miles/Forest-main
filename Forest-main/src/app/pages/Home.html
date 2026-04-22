@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页 - 一起去森林浴吧</title>
+  <link rel="stylesheet" href="../forest.css">
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* === 核心增强样式 === */
+    
+    /* 1. 全屏贯穿背景 */
+    #hero-bg {
+      position: fixed; /* 固定背景，不随滚动条移动 */
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+      transition: opacity 0.8s ease, object-position 0.8s ease;
+    }
+
+    /* 2. 导航栏布局优化：让链接与标签靠近 */
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 28px; /* 调整跳转按钮与小标签的距离 */
+      margin-left: auto;
+    }
+
+    /* 3. 加粗波浪下划线 */
+    .nav-link {
+      position: relative;
+      text-decoration: none;
+      padding-bottom: 6px;
+      transition: color 0.3s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background-color: var(--primary); /* 颜色随主题变化 */
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0,4 Q5,8 10,4 T20,4' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0,4 Q5,8 10,4 T20,4' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+      -webkit-mask-size: 18px 100%;
+      mask-size: 18px 100%;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-link:hover::after, .nav-link.active::after {
+      transform: scaleX(1);
+    }
+    .nav-link.active {
+      color: var(--primary) !important;
+      font-weight: 700;
+    }
+
+    /* 4. 全局主题过渡 */
+    body {
+      transition: background-color 0.6s ease, color 0.6s ease;
+    }
+/* === 飞鸟信件增强版布局 === */
+    .letter-wall {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      perspective: 1000px; /* 为错落感增加一点点透视 */
+    }
+
+    .bird-letter {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      padding: 45px 35px;
+      border-radius: 2px;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      
+      /* 核心：纸张纹理背景 */
+      /* 使用了一个极其微弱的 SVG 噪声纹理和渐变叠加 */
+      background-image: 
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+        linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%);
+      background-blend-mode: overlay;
+      
+      box-shadow: 
+        1px 1px 2px rgba(0,0,0,0.05),
+        5px 15px 30px rgba(0,0,0,0.08);
+    }
+
+    /* 三种深浅不同的信纸区分 */
+    /* 1. 浅色 (Fresh Paper) */
+    .letter-fresh {
+      background-color: #ffffff;
+      transform: rotate(-2deg) translateY(10px);
+      z-index: 3;
+    }
+
+    /* 2. 中性色 (Natural Paper) */
+    .letter-natural {
+      background-color: #fdfbf7; /* 淡淡的象牙色 */
+      transform: rotate(2deg) translateY(-15px);
+      z-index: 2;
+    }
+
+    /* 3. 深色/复古色 (Vintage Paper) */
+    .letter-vintage {
+      background-color: #f2ede4; /* 类似牛皮纸/旧信件色 */
+      transform: rotate(-1deg) translateY(20px);
+      z-index: 1;
+    }
+
+    .bird-letter:hover {
+      transform: rotate(0deg) scale(1.05) translateY(-10px) !important;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    /* 内部修饰 */
+    .letter-inner {
+      position: relative;
+      border: 1px solid rgba(0,0,0,0.03); /* 模拟信纸压痕 */
+      padding: 10px;
+      min-height: 200px;
+    }
+
+    .bird-icon {
+      position: absolute;
+      top: -35px;
+      left: 15px;
+      font-size: 34px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+      animation: bird-soar 5s ease-in-out infinite alternate;
+      z-index: 5;
+    }
+
+    @keyframes bird-soar {
+      from { transform: translateY(0) rotate(5deg); }
+      to { transform: translateY(-12px) rotate(-5deg); }
+    }
+
+    .post-stamp {
+      position: absolute;
+      top: 25px;
+      right: 20px;
+      border: 1px solid currentColor;
+      opacity: 0.2;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: bold;
+      transform: rotate(25deg);
+      color: var(--soil);
+      text-transform: uppercase;
+    }
+
+    .letter-list {
+      list-style: none;
+      padding: 0;
+    }
+    .letter-list li {
+      font-family: var(--font-hand);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      /* color: var(--foreground); */
+    }
+    .letter-list li span {
+      font-family: var(--font-hand);
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .letter-footer {
+      margin-top: 30px;
+      text-align: right;
+      font-family: 'Gaegu', cursive;
+      opacity: 0.5;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .letter-wall { gap: 60px; }
+      .bird-letter { transform: rotate(0) !important; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body class="theme-spring"> <img id="hero-bg" src="" alt="季节背景" />
+
+<nav class="navbar" style="background: rgba(253, 251, 247, 0.75); backdrop-filter: blur(10px);">
+  <!-- 左侧 Logo -->
+  <a href="Home.html" class="navbar-logo">
+    <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+  </a>
+  
+  <!-- 右侧操作区：导航链接 + 季节切换 + 标签 -->
+  <div class="navbar-actions">
+    <ul class="navbar-links">
+      <li><a href="Home.html" class="nav-link active">首页</a></li>
+      <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
+      <li><a href="Random.html" class="nav-link">随机逛</a></li>
+      <li><a href="MapPage.html" class="nav-link">去哪儿逛</a></li>
+    </ul>
+
+    <!-- 季节切换器（融入导航栏，保留原容器ID） -->
+    <div class="navbar-season" title="轻轻拨动季节">
+      <div class="season-toggle" id="season-toggle-container"></div>
+    </div>
+
+    <div class="navbar-tag">🌳 今日宜·发呆</div>
+  </div>
+</nav>
+
+
+<!-- 第一节：首页诗句 + 按钮，避免与固定导航重叠 -->
+<section style="position: relative; min-height: 115vh;max-height: 120; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 0 80px; margin: 0; box-sizing: border-box;">
+  <!-- 为固定导航预留空间：padding-top: 100px (70px导航高度 + 30px留白) -->
+  
+  <div class="hero-overlay" style="background: none; width: 100%; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+    
+    <!-- SVG 装饰（绝对定位但置于底层，不干扰交互） -->
+    <div id="svg-decorations" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
+
+    <!-- 诗句区域（相对定位，在装饰层之上） -->
+    <div id="season-lyrics" style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; margin-bottom: 48px;">
+      <!-- 诗句内容由 JavaScript 动态渲染 -->
+    </div>
+
+    <!-- 按钮区域 -->
+    <div style="position: relative; z-index: 1; text-align: center;">
+      <button class="btn-primary" 
+              style="padding: 16px 50px; font-size: 19px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);" 
+              onclick="window.location.href='Guide.html'">
+        🌱 开始今天的森林浴
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section class="glass-section-transition" style="padding: 120px 0; position: relative;">
+    <div class="page-container">
+      <div class="letter-wall">
+        
+        <div class="bird-letter letter-fresh">
+          <div class="bird-icon">🕊️</div>
+          <div class="post-stamp">POSTED</div>
+          <div class="letter-inner">
+            <div style="font-size: 32px; margin-bottom: 15px;">🌬️</div>
+            <p class="text-caption-hand" style="line-height: 1.8; font-size: 21px;">
+              "这里没有算法推荐，<br>
+              只有风吹树叶<br>
+              和心跳变慢的声音。"
+            </p>
+            <div class="letter-footer">— 森林的私语</div>
+          </div>
+        </div>
+
+        <div class="bird-letter letter-natural">
+          <div class="bird-icon" style="top: -20px; left: auto; right: 20px; transform: scaleX(-1);">🕊️</div>
+          <div class="post-stamp" style="border-radius: 50%; top: 40px;">TOKYO 1982</div>
+          <div class="letter-inner">
+            <h3 class="text-caption-hand" style="margin-bottom: 12px; font-family: 'Caveat', cursive; font-size: 26px;">🌿 什么是森林浴？</h3>
+            <p class="text-caption-hand" style="font-size: 15px; line-height: 1.7;">
+              源自日本的“Shinrin-yoku”，意为沐浴在森林的气息中。它不是登山锻炼，而是一场通过“视觉、听觉、嗅觉”重新连接大自然的感官旅程。
+            </p>
+          </div>
+        </div>
+
+        <div class="bird-letter letter-vintage">
+          <div class="bird-icon" style="top: -40px; left: 40%;">🕊️</div>
+          <div class="post-stamp" style="transform: rotate(-10deg); border: 1px solid;">URGENT</div>
+          <div class="letter-inner">
+            <h3 class="text-caption-hand" style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+              📬 如何开始？
+            </h3>
+            <ul class="letter-list" style="font-size: 15px; line-height: 1.8; font-family: 'Caveat', cursive;" >
+              <li><span>01.</span> 找个有树的地方</li>
+              <li><span>02.</span> 手机调至静音</li>
+              <li><span>03.</span> 漫无目的地走</li>
+              <li><span>04.</span> 感受呼吸的起伏</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" style="background: var(--background); opacity: 0.9;">
+    <div class="footer-leaves">🌱 🌿 🍃 🌾 🌿 🌱</div>
+    <p class="text-small">一起去森林浴吧～ · 随时开始，即刻放松</p>
+  </footer>
+
+  <script src="../data.js"></script>
+  <script>
+    // 1. 装饰 SVG 渲染
+    const renderLeaf = (styleStr) => `<svg viewBox="0 0 40 50" fill="none" style="width: 40px; height: 50px; opacity: 0.4; ${styleStr}"><path d="M20 48 C20 48 2 36 2 18 C2 6 10 2 20 2 C30 2 38 6 38 18 C38 36 20 48 20 48Z" fill="var(--primary)" fill-opacity="0.25" stroke="var(--primary)" stroke-width="1.5" stroke-linejoin="round"/><path d="M20 48 L20 8" stroke="var(--primary)" stroke-width="1.2" stroke-linecap="round" /></svg>`;
+    
+    document.getElementById('svg-decorations').innerHTML = renderLeaf('position: absolute; top: 15%; left: 8%; transform: rotate(-20deg);') + renderLeaf('position: absolute; top: 20%; right: 10%; transform: rotate(30deg);');
+
+    // 2. 状态识别逻辑 (高亮当前页)
+    const currentPath = window.location.pathname.split('/').pop() || 'Home.html';
+    document.querySelectorAll('.nav-link').forEach(link => {
+      if (link.getAttribute('href') === currentPath) link.classList.add('active');
+    });
+
+    const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+    const heroBg = document.getElementById('hero-bg');
+    const lyricsContainer = document.getElementById('season-lyrics'); // 获取新容器
+    const toggleContainer = document.getElementById('season-toggle-container');
+
+    function renderSeason(idx) {
+      currentSeasonIdx = idx;
+      const season = SEASONS[idx];
+      
+      // 1. 背景平滑过渡
+      heroBg.style.opacity = 0;
+      setTimeout(() => {
+        heroBg.src = season.bg;
+        heroBg.style.objectPosition = season.pos || "center";
+        heroBg.style.opacity = 1;
+      }, 300);
+
+      // 2. 核心：竖排随机错落小诗
+      const text = season.icon + " " + season.hint;
+      const lyricsContainer = document.getElementById('season-lyrics');
+      lyricsContainer.innerHTML = ''; 
+
+      // 使用 [...text] 确保 Emoji 不乱码
+      [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.innerText = char;
+        span.style.display = 'inline-block';
+        span.style.fontFamily = "'Caveat', cursive";
+        span.style.color = 'var(--foreground)';
+        span.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        span.style.transitionDelay = `${i * 0.05}s`; 
+
+        // 字体明显变化：由小到大
+        const sizeGrowth = Math.pow(i, 1.4) * 1.5; 
+        const fontSize = 24 + sizeGrowth;
+        span.style.fontSize = `${fontSize}px`;
+
+        // 左右随机错落 (-40px 到 40px)
+        const randomX = (Math.random() - 0.5) * 90; 
+        const randomRotate = (Math.random() - 0.5) * 20;
+
+        span.style.transform = `translateX(${randomX}px) rotate(${randomRotate}deg)`;
+        
+        // 垂直间距：根据字号自动调整
+        span.style.margin = `${2 + i * 0.3}px 0`;
+
+        lyricsContainer.appendChild(span);
+      });
+
+      // 3. 切换主题类
+      document.body.classList.remove(...themeClasses);
+      document.body.classList.add(themeClasses[idx]);
+      
+      // 4. 渲染按钮
+      toggleContainer.innerHTML = SEASONS.map((s, i) => `
+        <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderSeason(${i})" style="cursor: pointer;">
+          <span style="font-size: 20px;">${s.icon}</span>
+        </button>
+      `).join('');
+    }
+
+    // 初始化
+    renderSeason(0);
+  </script>
+</body>
+</html>

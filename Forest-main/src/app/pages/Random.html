@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>随机逛 - 一起去森林浴吧</title>
+  <link rel="stylesheet" href="../forest.css">
+</head>
+<body style="margin: 0; padding: 0; background: var(--fg); min-height: 100vh; display: flex; flex-direction: column;">
+
+  <nav class="navbar">
+    <a href="Home.html" class="navbar-logo"><span class="navbar-logo-icon">🌿</span>一起去森林浴吧～</a>
+    
+    <div style="display: flex; align-items: center; gap: 32px;">
+      <ul class="navbar-links">
+        <li><a href="Home.html" class="nav-link">首页</a></li>
+        <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
+        <li><a href="Random.html" class="nav-link active">随机逛</a></li>
+        <li><a href="MapPage.html" class="nav-link">去哪儿逛</a></li>
+      </ul>
+      <div class="navbar-tag">🌳 今日宜·发呆</div>
+    </div>
+  </nav>
+
+  <div class="page-container" style="flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 100%; padding: 0;">
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 60px; width: 100%; padding-left: 24px; padding-right: 24px; box-sizing: border-box; max-width: 1400px; margin: 0 auto;">
+      
+      <div class="window-frame" style="width: 95%; top: 10px; height: 88vh; min-height: 500px; position: relative;border: none; outline: none;">
+        
+        <img id="window-img" src="" alt="窗外风景" style="width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease;border: none; outline: none;" />
+        
+        <div id="window-location" style="position: absolute; top: 24px; right: 24px; background: rgba(0,0,0,0.4); border-radius: 16px; padding: 6px 14px; font-family: 'Caveat', cursive; font-size: 16px; color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);">
+        </div>
+
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); padding: 80px 32px 32px; display: flex; justify-content: space-between; align-items: flex-end; box-sizing: border-box; pointer-events: none;">
+          
+          <div style="color: #fff; max-width: 60%; pointer-events: auto;">
+            <p id="window-caption" class="text-caption-hand" style="margin: 0 0 8px; font-style: italic; font-size: 1.2rem; text-shadow: 1px 1px 4px rgba(0,0,0,0.6);">
+            </p>
+            <span id="window-user" class="text-small" style="opacity: 0.85; text-shadow: 1px 1px 4px rgba(0,0,0,0.6);">
+            </span>
+          </div>
+
+          <span id="window-counter" style="font-family: 'Caveat', cursive; font-size: 16px; color: #fff; opacity: 0.7; text-shadow: 1px 1px 4px rgba(0,0,0,0.6);">
+          </span>
+        </div>
+
+        <button onclick="nextScene()" style="position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); color: #2c3e50; border: none; padding: 14px 32px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.2); backdrop-filter: blur(10px); transition: transform 0.2s, background 0.2s; pointer-events: auto; display: flex; align-items: center; gap: 8px;" 
+                onmouseover="this.style.background='#fff'; this.style.transform='translateX(-50%) scale(1.03)'" 
+                onmouseout="this.style.background='rgba(255,255,255,0.85)'; this.style.transform='translateX(-50%) scale(1)'">
+          换个地方逛逛 🌲
+        </button>
+
+      </div>
+
+      <p class="text-caption-hand" style="margin: 0; opacity: 0.6; text-align: center; max-width: 400px; margin-top: 8px;">
+        每一扇窗都是有人真实去过的地方<br />
+        愿你也能找到自己的那片森林 🌲
+      </p>
+    </div>
+  </div>
+
+  <button class="fab-btn" onclick="toggleModal(true)" title="投稿我的窗外">+</button>
+
+  <div id="submit-modal" class="modal-overlay" style="display: none;" onclick="handleOverlayClick(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="toggleModal(false)">✕</button>
+
+      <div id="modal-success-view" style="display: none; text-align: center; padding: 20px 0;">
+        <div style="font-size: 56px; margin-bottom: 16px;">🌿</div>
+        <h3 class="text-medium" style="margin: 0 0 10px;">谢谢你的分享！</h3>
+        <p class="text-body" style="margin: 0; opacity: 0.8;">
+          你的森林窗景已收到，<br />正在种植进地图里～
+        </p>
+      </div>
+
+      <form id="submit-form" onsubmit="handleFormSubmit(event)">
+        <h3 class="text-medium" style="margin: 0 0 6px; color: var(--fg);">📌 投稿我的窗外</h3>
+        <p class="text-small" style="margin: 0 0 24px; opacity: 0.7;">分享你镜头里的森林，让更多人看见</p>
+
+        <div class="form-group">
+          <label class="form-label">昵称</label>
+          <input class="form-input" type="text" placeholder="云游仙人 / Tomo ..." required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">地点</label>
+          <input class="form-input" type="text" placeholder="北京香山 / 京都岚山 ..." required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">图片链接 (可选)</label>
+          <input class="form-input" type="url" placeholder="https://..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">一句话描述</label>
+          <textarea class="form-input" rows="3" placeholder="那天风很轻，树叶在说话..." required></textarea>
+        </div>
+
+        <button class="btn-primary" type="submit" style="width: 100%; justify-content: center; margin-top: 4px;">
+          🌱 种下这扇窗
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-leaves">🌱 🌿 🍃 🌾 🌿 🌱</div>
+    <p class="text-small" style="margin: 0; opacity: 0.6;">
+      一起去森林浴吧～ · 随时开始，即刻放松
+    </p>
+  </footer>
+
+  <script src="../data.js"></script>
+
+  <script>
+    // 1. 初始化数据：打乱场景数组
+    function shuffleArray(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+    const sceneQueue = shuffleArray(WINDOW_SCENES);
+    let currentIndex = 0;
+
+    // 2. DOM 元素获取
+    const imgEl = document.getElementById('window-img');
+    const locationEl = document.getElementById('window-location');
+    const captionEl = document.getElementById('window-caption');
+    const userEl = document.getElementById('window-user');
+    const counterEl = document.getElementById('window-counter');
+    
+    const modalEl = document.getElementById('submit-modal');
+    const formView = document.getElementById('submit-form');
+    const successView = document.getElementById('modal-success-view');
+
+    // 图片加载完成时触发渐显动画
+    imgEl.onload = function() {
+      imgEl.style.opacity = 1;
+    };
+
+    // 3. 渲染场景函数
+    function renderCurrentScene() {
+      const scene = sceneQueue[currentIndex % sceneQueue.length];
+      
+      // 更新文本信息
+      locationEl.innerHTML = `📍 ${scene.location}`;
+      captionEl.innerHTML = `"${scene.caption}"`;
+      userEl.innerHTML = `— ${scene.user}`;
+      counterEl.innerHTML = `${(currentIndex % sceneQueue.length) + 1} / ${sceneQueue.length}`;
+      
+      // 替换图片 Src (会触发 imgEl.onload 然后显示)
+      imgEl.src = scene.url;
+      imgEl.alt = scene.location;
+    }
+
+    // 4. 切换下一场景
+    window.nextScene = function() {
+      // 先让当前图片淡出
+      imgEl.style.opacity = 0;
+      
+      // 配合 CSS 里的 0.8s 动画，这里改为等待 800ms 渐隐完毕后，再更新数据加载下一张
+      setTimeout(() => {
+        currentIndex++;
+        renderCurrentScene();
+      }, 800);
+    };
+
+    // 5. 模态框交互逻辑
+    window.toggleModal = function(show) {
+      if (show) {
+        modalEl.style.display = 'flex';
+        formView.style.display = 'block';
+        successView.style.display = 'none';
+        formView.reset(); // 清空表单
+      } else {
+        modalEl.style.display = 'none';
+      }
+    };
+
+    window.handleOverlayClick = function(e) {
+      // 点击遮罩层外围时关闭
+      if (e.target === modalEl) {
+        toggleModal(false);
+      }
+    };
+
+    window.handleFormSubmit = function(e) {
+      e.preventDefault();
+      
+      // 隐藏表单，显示成功视图
+      formView.style.display = 'none';
+      successView.style.display = 'block';
+
+      // 模拟提交等待 1.8 秒后自动关闭
+      setTimeout(() => {
+        toggleModal(false);
+      }, 1800);
+    };
+
+    // 初始化第一次渲染
+    renderCurrentScene();
+  </script>
+</body>
+</html>

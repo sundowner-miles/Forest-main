@@ -1,0 +1,221 @@
+// ============================================
+// 森林浴 App — Data
+// ============================================
+
+// ── Guide Items ──────────────────────────────────────────────
+const GUIDE_ITEMS = [
+  {
+    id: 1,
+    icon: "🐌",
+    title: "极慢漫步",
+    subtitle: "慢到能听见自己的呼吸",
+    description: "把步速调到日常的三分之一，每一步都感受脚底的触感变化——草地、石头、泥土……速度越慢，细节越多。",
+    tip: "建议时长：20–40 分钟",
+  },
+  {
+    id: 2,
+    icon: "🐨",
+    title: "躺平发呆",
+    subtitle: "把天空当作屏保",
+    description: "找一片软草地或大树下，直接躺下来。看云朵漂移、树枝摇晃，允许大脑放空——这不叫浪费时间，叫主动恢复。",
+    tip: "建议时长：15–30 分钟",
+  },
+  {
+    id: 3,
+    icon: "👣",
+    title: "赤脚接地气",
+    subtitle: "大地比任何地毯都温柔",
+    description: "脱下鞋袜，直接踩在泥土、草地或苔藓上。皮肤与大地的接触会激活神经末梢，产生微妙的踏实感。",
+    tip: "注意：避开石砾，晨露草地最佳",
+  },
+  {
+    id: 4,
+    icon: "🔍",
+    title: "微距探索",
+    subtitle: "叶脉里藏着另一个宇宙",
+    description: "蹲下来，近距离观察一片叶子、一根树枝或一颗露珠。用手机微距拍摄，你会发现平时从未注意的世界。",
+    tip: "携带：小放大镜 / 手机微距镜头",
+  },
+  {
+    id: 5,
+    icon: "🧺",
+    title: "森林野餐",
+    subtitle: "食物在大自然里格外香",
+    description: "带上饭团、果汁和薄毯，在树荫下安静地吃一顿饭。不要看手机，专注于食物的味道和周围的声音。",
+    tip: "别忘了：带走所有垃圾",
+  },
+  {
+    id: 6,
+    icon: "👂",
+    title: "声景冥想",
+    subtitle: "闭上眼睛，世界更大",
+    description: "选一个安静的角落坐下，闭眼5分钟。依次感知：远处的鸟鸣 → 风穿过叶片的沙沙声 → 自己的心跳。",
+    tip: "尝试：辨别3种不同的声音",
+  },
+];
+
+// ── Window Scenes ────────────────────────────────────────────
+const WINDOW_SCENES = [
+  {
+    id: 1,
+    url: "https://images.unsplash.com/photo-1767948156673-ce472bd76be8?w=1200&q=80",
+    location: "京都岚山竹林",
+    caption: "晨雾在竹尖打转，像是大地在轻轻呼吸。",
+    user: "Tomo · 京都",
+  },
+  {
+    id: 2,
+    url: "https://images.unsplash.com/photo-1718123572442-08d3b33a88fa?w=1200&q=80",
+    location: "奈良若草山",
+    caption: "樱花落下的速度，刚好够你忘掉烦恼。",
+    user: "春风 · 奈良",
+  },
+  {
+    id: 3,
+    url: "https://images.unsplash.com/photo-1659431246325-52dad0c83dd1?w=1200&q=80",
+    location: "西双版纳热带雨林",
+    caption: "叶片大到可以躲雨，世界变得简单又美好。",
+    user: "野生鱼 · 云南",
+  },
+  {
+    id: 4,
+    url: "https://images.unsplash.com/photo-1728242510217-9e2b02654522?w=1200&q=80",
+    location: "长白山红叶谷",
+    caption: "秋天把颜料全打翻了，真好。",
+    user: "橙子 · 吉林",
+  },
+  {
+    id: 5,
+    url: "https://images.unsplash.com/photo-1769015238618-c5bcb0c42091?w=1200&q=80",
+    location: "北海道旭川",
+    caption: "雪压松枝，静得只剩自己的心跳。",
+    user: "雪人 · 北海道",
+  },
+  {
+    id: 6,
+    url: "https://images.unsplash.com/photo-1767334852329-90371885d4bd?w=1200&q=80",
+    location: "苏州拙政园",
+    caption: "苔藓比任何地毯都柔软，时间在这里不流动。",
+    user: "苏苏 · 苏州",
+  },
+];
+
+// ── Parks ─────────────────────────────────────────────────────
+const PARKS = [
+  {
+    id: 1,
+    name: "香山公园",
+    subtitle: "枫叶红过所有诗句的地方",
+    distance: "18km",
+    openHours: "06:00 – 19:00",
+    bestSeason: "秋季最美",
+    seasonIcon: "🍂",
+    features: ["赏红叶", "登山健步", "寺庙探访", "拍照打卡"],
+    description: "香山以深秋的漫山红叶闻名北京，黄栌树在10月把山头染成一片燃烧的橙红。清晨独自登上鬼见愁，俯瞰山谷，秋风里有一种让人不愿开口说话的美。",
+    image: "https://images.unsplash.com/photo-1728242510217-9e2b02654522?w=800&q=80",
+    mapX: 16,
+    mapY: 28,
+    tips: [
+      { id: 1, nickname: "阿橙", text: "清晨6点来，山顶的晨雾和红叶加在一起，完全治愈。", emoji: "🍂", rotation: -2, date: "10月" },
+      { id: 2, nickname: "徒步小熊", text: "走香山南路，人少景好，能遇到松鼠！", emoji: "🐿️", rotation: 2.5, date: "10月" },
+      { id: 3, nickname: "Lucy", text: "带上热咖啡，在山腰的大石头上坐一下午。", emoji: "☕", rotation: -1.5, date: "11月" },
+      { id: 4, nickname: "绿豆君", text: "雨后来效果翻倍，叶子上的水珠超美。", emoji: "💧", rotation: 1, date: "10月" },
+    ],
+  },
+  {
+    id: 2,
+    name: "玉渊潭公园",
+    subtitle: "北京最治愈的樱花隧道",
+    distance: "5.2km",
+    openHours: "06:00 – 21:00",
+    bestSeason: "春季最美",
+    seasonIcon: "🌸",
+    features: ["赏樱花", "湖边散步", "野餐草地", "骑行环湖"],
+    description: "玉渊潭的樱花季在3月末到4月初，八重樱和染井吉野齐放，粉白色的花瓣落在湖面上，像水面漂着的诗。湖边的草坪是天然的野餐垫，风一来整片樱花就下雪了。",
+    image: "https://images.unsplash.com/photo-1718123572442-08d3b33a88fa?w=800&q=80",
+    mapX: 38,
+    mapY: 52,
+    tips: [
+      { id: 1, nickname: "桃小鱼", text: "3月28日前后是高峰，工作日早上来，一个人包场！", emoji: "🌸", rotation: 1.8, date: "3月" },
+      { id: 2, nickname: "摄影师", text: "西门进，顺时针走，湖边那棵孤樱是隐藏景点。", emoji: "📸", rotation: -2.5, date: "4月" },
+      { id: 3, nickname: "悠悠", text: "带一本书，在樱花下看两小时，完全忘记城市。", emoji: "📚", rotation: 1, date: "4月" },
+    ],
+  },
+  {
+    id: 3,
+    name: "奥林匹克森林公园",
+    subtitle: "城市绿肺 · 万步天堂",
+    distance: "12km",
+    openHours: "06:00 – 21:00",
+    bestSeason: "四季皆宜",
+    seasonIcon: "🌿",
+    features: ["长距离徒步", "湿地观鸟", "森林跑步", "亲子活动"],
+    description: "北京最大的城市公园，南北两园合计680公顷。奥海湿地在候鸟迁徙季会停满苍鹭和野鸭，仰山的林中步道四季都值得来走一走，完全忘记自己在城市里。",
+    image: "https://images.unsplash.com/photo-1774900148206-5fa137cc1cea?w=800&q=80",
+    mapX: 62,
+    mapY: 22,
+    tips: [
+      { id: 1, nickname: "老王", text: "北园人少！推荐从北门进，走湿地的木栈道，能看到苍鹭。", emoji: "🦩", rotation: -1, date: "4月" },
+      { id: 2, nickname: "跑步兔", text: "绕南园跑一圈刚好10公里，心情变好是有科学依据的。", emoji: "🏃", rotation: 2, date: "6月" },
+      { id: 3, nickname: "花花", text: "秋天落叶季，仰山的台阶上铺满金黄色，踩下去有声音。", emoji: "🍁", rotation: -2, date: "11月" },
+      { id: 4, nickname: "云云", text: "带上望远镜，奥海边上的鸟真的超多！", emoji: "🔭", rotation: 1.5, date: "3月" },
+    ],
+  },
+  {
+    id: 4,
+    name: "圆明园遗址公园",
+    subtitle: "在历史的废墟里长出了荷花",
+    distance: "15km",
+    openHours: "07:00 – 18:30",
+    bestSeason: "夏季赏荷",
+    seasonIcon: "🌺",
+    features: ["赏荷花", "历史遗迹", "安静散步", "摄影"],
+    description: "圆明园的西部福海区域在夏天开满荷花，清晨的雾气和荷叶上的露珠让人完全平静。遗址区的残柱长满青苔，历史的沧桑感和自然的生命力奇妙地共存在同一个地方。",
+    image: "https://images.unsplash.com/photo-1767334852329-90371885d4bd?w=800&q=80",
+    mapX: 55,
+    mapY: 60,
+    tips: [
+      { id: 1, nickname: "夏天来", text: "7月来赏荷，清晨6点的荷花是整个夏天最美的东西。", emoji: "🪷", rotation: -1.8, date: "7月" },
+      { id: 2, nickname: "小石子", text: "遗址区很安静，带着耳机在废墟里走路，奇妙的疗愈。", emoji: "🎧", rotation: 2, date: "10月" },
+      { id: 3, nickname: "林木木", text: "骑共享单车游园，一下午刚刚好，不累。", emoji: "🚲", rotation: -0.5, date: "5月" },
+    ],
+  },
+];
+
+// ── Season backgrounds ───────────────────────────────────────
+const SEASONS = [
+  {
+    key: "spring",
+    icon: "🌸",
+    label: "春",
+    name: "春 · 樱",
+    bg: "../imgs/春.jpg",
+    hint: "万物萌发，春风吹来希望",
+  },
+  {
+    key: "summer",
+    icon: "🌿",
+    label: "夏",
+    name: "夏 · 绿",
+    bg: "../imgs/夏.jpg",
+    hint: "茂密的绿，遮住了所有焦虑",
+  },
+  {
+    key: "autumn",
+    icon: "🍂",
+    label: "秋",
+    name: "秋 · 枫",
+    bg: "../imgs/秋1.jpg",
+    pos:"center 60%",
+    hint: "每一片落叶，都是秋的来信",
+  },
+  {
+    key: "winter",
+    icon: "❄️",
+    label: "冬",
+    name: "冬 · 雪",
+    bg: "../imgs/冬.jpg",
+    pos:"center 80%",
+    hint: "大雪过后，世界终于安静",
+  },
+];
