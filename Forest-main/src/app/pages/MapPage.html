@@ -4,48 +4,114 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>去哪儿逛 - 一起去森林浴吧</title>
-  <link rel="stylesheet" href="../forest.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       ✨ 进阶魔法：地图四季换肤变量
+       ========================================== */
+    /* 1. 春季 (当前默认：粉绿清新) */
+    :root, body.theme-spring {
+      --map-bg: #E4EDDA;
+      --map-river: #B8D4E8;
+      --map-river-light: #C8DFF0;
+      --map-forest-1: #C8DDB8;
+      --map-forest-2: #C0D8B0;
+      --map-road: #D4C4A0;
+      --map-tree-out: #7AB890;
+      --map-tree-in: #6AA87E;
+    }
+    
+    /* 2. 夏季 (深邃浓郁、茂盛) */
+    body.theme-summer {
+      --map-bg: #C1DCA0; 
+      --map-river: #8DBAE0;
+      --map-river-light: #A5CEF0;
+      --map-forest-1: #A5C988;
+      --map-forest-2: #9BB87C;
+      --map-road: #D0BD94;
+      --map-tree-out: #4A9A64;
+      --map-tree-in: #387D4E;
+    }
+    
+    /* 3. 秋季 (橙黄、大地色) */
+    body.theme-autumn {
+      --map-bg: #F3E3C8;
+      --map-river: #AECBDE;
+      --map-river-light: #C0DBEE;
+      --map-forest-1: #E8D0A5;
+      --map-forest-2: #DAB988;
+      --map-road: #CDB388;
+      --map-tree-out: #D47A46;
+      --map-tree-in: #B6582B;
+    }
+    
+    /* 4. 冬季 (雪白、结冰浅蓝) */
+    body.theme-winter {
+      --map-bg: #F4F7F9; 
+      --map-river: #CDE2EE; 
+      --map-river-light: #E0EFF8;
+      --map-forest-1: #E6ECEF;
+      --map-forest-2: #DCE5EA;
+      --map-road: #E3DCD2;
+      --map-tree-out: #A4B8C0;
+      --map-tree-in: #849CA6;
+    }
+
+    /* 核心动画：让所有 SVG 元素的颜色变化都具有丝滑水彩晕染感 */
+    #svg-map-layer svg * {
+      transition: fill 0.8s ease-in-out, stroke 0.8s ease-in-out;
+    }
+  </style>
 </head>
 <body style="margin: 0; padding: 0; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column;">
 
-  <nav class="navbar">
-    <a href="Home.html" class="navbar-logo"><span class="navbar-logo-icon">🌿</span>一起去森林浴吧～</a>
-    
-    <div style="display: flex; align-items: center; gap: 32px;">
-      
-      <ul class="navbar-links">
-        <li><a href="Home.html" class="nav-link">首页</a></li>
-        <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
-        <li><a href="Random.html" class="nav-link">随机逛</a></li>
-        <li><a href="MapPage.html" class="nav-link active">去哪儿逛</a></li>
-      </ul>
-      
-      <div class="navbar-tag">🌳 今日宜·发呆</div>
-      
-    </div>
-  </nav>
+<nav class="navbar" style="background: rgba(253, 251, 247, 0.75); backdrop-filter: blur(10px);">
+  <a href="Home.html" class="navbar-logo">
+    <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+  </a>
 
-  <div class="page-container" style="flex: 1; display: flex; flex-direction: column; max-width: 1400px; padding-bottom: 50px;">
-    
-    <div class="page-header" style="margin-bottom: 20px;">
-      <h1 class="text-large" style="margin: 0;">🗺️ 去哪儿逛</h1>
-      <p class="text-body" style="margin: 8px 0 0; opacity: 0.8;">
-        点击地图上的标记，探索你附近的森林浴圣地
-      </p>
+  <div class="navbar-actions">
+    <ul class="navbar-links">
+      <li><a href="Home.html" class="nav-link">首页</a></li>
+      <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
+      <li><a href="Random.html" class="nav-link">随机逛</a></li>
+      <li><a href="MapPage.html" class="nav-link active">去哪儿逛</a></li>
+    </ul>
+
+    <div class="navbar-season" title="轻轻拨动季节">
+      <div class="season-toggle" id="season-toggle-container"></div>
     </div>
 
-    <div class="map-outer" style="flex: 1; min-height: 560px; width: 100%; position: relative; border-radius: 16px; overflow: hidden;" onclick="setActiveId(null)">
+    <div class="navbar-tag">🌳 今日宜·发呆</div>
+  </div>
+</nav>
+
+  <div class="page-container" style="flex: 1; display: flex; flex-direction: column; max-width: 96%; width: 100%; padding: 30px 0 50px;">
+    
+    <div class="map-outer" style="flex: 1; min-height: 75vh; width: 100%; position: relative; border-radius: 24px; overflow: hidden; border: none; box-shadow: 0 25px 60px var(--fg-light), 0 4px 15px rgba(0,0,0,0.03);" onclick="setActiveId(null)">
       
       <div id="svg-map-layer" style="position: absolute; inset: 0;"></div>
       
       <div id="markers-layer" style="position: absolute; inset: 0; pointer-events: none;"></div>
       <div id="bubble-layer" style="position: absolute; inset: 0; pointer-events: none; z-index: 15;"></div>
 
-      <div style="position: absolute; bottom: 20px; left: 20px; z-index: 10; background: rgba(253,251,247,0.9); border: 1.5px dashed var(--soil-light); border-radius: 16px 4px 16px 4px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(166,138,107,0.05);" onclick="event.stopPropagation()">
+      <div style="position: absolute; bottom: 32px; left: 32px; z-index: 10; background: rgba(253,251,247,0.9); border: 1.5px dashed var(--soil-light); border-radius: 16px 4px 16px 4px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(166,138,107,0.05);" onclick="event.stopPropagation()">
         <span style="font-size: 20px;">🧍</span>
         <span class="text-small" style="font-weight: 700; color: var(--fg); margin: 0;">你的位置</span>
       </div>
     </div>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <p class="text-body" style="margin: 0; opacity: 0.7; color: var(--soil);">
+        👆 点击地图上的标记，探索你附近的森林浴圣地
+      </p>
+    </div>
+
   </div>
 
   <footer class="site-footer">
@@ -59,7 +125,7 @@
 
   <script>
     // ==========================================
-    // 1. 渲染静态背景 SVG 地图
+    // 1. 渲染静态背景 SVG 地图 (使用 CSS 变量动态换肤)
     // ==========================================
     const treesData = [
       [100, 80], [140, 95], [120, 120], [80, 110], [160, 60],
@@ -83,33 +149,35 @@
 
     const svgMapHTML = `
       <svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%; display: block;" preserveAspectRatio="xMidYMid slice">
-        <rect width="1200" height="560" fill="#E4EDDA" />
-        <path d="M 0,200 Q 100,190 200,210 Q 300,230 400,215 Q 480,200 560,220 Q 640,238 720,225 Q 820,208 920,218 Q 1020,228 1100,210 Q 1150,202 1200,208" fill="none" stroke="#B8D4E8" stroke-width="28" stroke-linecap="round" />
-        <path d="M 0,200 Q 100,190 200,210 Q 300,230 400,215 Q 480,200 560,220 Q 640,238 720,225 Q 820,208 920,218 Q 1020,228 1100,210 Q 1150,202 1200,208" fill="none" stroke="#C8DFF0" stroke-width="14" stroke-linecap="round" />
-        <path d="M 350,0 Q 360,80 370,140 Q 380,180 400,215" fill="none" stroke="#B8D4E8" stroke-width="12" stroke-linecap="round" />
-        <ellipse cx="192" cy="155" rx="90" ry="72" fill="#C8DDB8" opacity="0.7" />
-        <ellipse cx="456" cy="305" rx="75" ry="58" fill="#C0D8B0" opacity="0.65" />
-        <ellipse cx="744" cy="132" rx="110" ry="80" fill="#CADFBA" opacity="0.7" />
-        <ellipse cx="660" cy="360" rx="80" ry="65" fill="#C3DAB2" opacity="0.65" />
-        <path d="M 180,0 Q 175,80 185,140 Q 192,155 200,200" fill="none" stroke="#D4C4A0" stroke-width="8" stroke-linecap="round" />
-        <path d="M 200,210 Q 280,240 360,275 Q 420,295 456,305" fill="none" stroke="#D4C4A0" stroke-width="8" stroke-linecap="round" />
-        <path d="M 400,215 Q 480,190 560,160 Q 640,138 744,132" fill="none" stroke="#D4C4A0" stroke-width="8" stroke-linecap="round" />
-        <path d="M 456,305 Q 540,335 610,355 Q 640,360 660,362" fill="none" stroke="#D4C4A0" stroke-width="8" stroke-linecap="round" />
-        <path d="M 744,210 Q 720,280 700,330 Q 680,355 660,362" fill="none" stroke="#D4C4A0" stroke-width="8" stroke-linecap="round" />
-        <path d="M 0,380 Q 200,370 400,375 Q 600,380 800,372 Q 1000,364 1200,368" fill="none" stroke="#D4C4A0" stroke-width="10" stroke-linecap="round" />
-        <path d="M 900,0 Q 910,100 920,200 Q 930,300 920,380" fill="none" stroke="#D4C4A0" stroke-width="8" stroke-linecap="round" />
+        <rect width="1200" height="560" fill="var(--map-bg)" />
+        <path d="M 0,200 Q 100,190 200,210 Q 300,230 400,215 Q 480,200 560,220 Q 640,238 720,225 Q 820,208 920,218 Q 1020,228 1100,210 Q 1150,202 1200,208" fill="none" stroke="var(--map-river)" stroke-width="28" stroke-linecap="round" />
+        <path d="M 0,200 Q 100,190 200,210 Q 300,230 400,215 Q 480,200 560,220 Q 640,238 720,225 Q 820,208 920,218 Q 1020,228 1100,210 Q 1150,202 1200,208" fill="none" stroke="var(--map-river-light)" stroke-width="14" stroke-linecap="round" />
+        <path d="M 350,0 Q 360,80 370,140 Q 380,180 400,215" fill="none" stroke="var(--map-river)" stroke-width="12" stroke-linecap="round" />
+        
+        <ellipse cx="192" cy="155" rx="90" ry="72" fill="var(--map-forest-1)" opacity="0.7" />
+        <ellipse cx="456" cy="305" rx="75" ry="58" fill="var(--map-forest-2)" opacity="0.65" />
+        <ellipse cx="744" cy="132" rx="110" ry="80" fill="var(--map-forest-1)" opacity="0.7" />
+        <ellipse cx="660" cy="360" rx="80" ry="65" fill="var(--map-forest-2)" opacity="0.65" />
+        
+        <path d="M 180,0 Q 175,80 185,140 Q 192,155 200,200" fill="none" stroke="var(--map-road)" stroke-width="8" stroke-linecap="round" />
+        <path d="M 200,210 Q 280,240 360,275 Q 420,295 456,305" fill="none" stroke="var(--map-road)" stroke-width="8" stroke-linecap="round" />
+        <path d="M 400,215 Q 480,190 560,160 Q 640,138 744,132" fill="none" stroke="var(--map-road)" stroke-width="8" stroke-linecap="round" />
+        <path d="M 456,305 Q 540,335 610,355 Q 640,360 660,362" fill="none" stroke="var(--map-road)" stroke-width="8" stroke-linecap="round" />
+        <path d="M 744,210 Q 720,280 700,330 Q 680,355 660,362" fill="none" stroke="var(--map-road)" stroke-width="8" stroke-linecap="round" />
+        <path d="M 0,380 Q 200,370 400,375 Q 600,380 800,372 Q 1000,364 1200,368" fill="none" stroke="var(--map-road)" stroke-width="10" stroke-linecap="round" />
+        <path d="M 900,0 Q 910,100 920,200 Q 930,300 920,380" fill="none" stroke="var(--map-road)" stroke-width="8" stroke-linecap="round" />
 
         ${treesData.map(([cx, cy]) => `
           <g transform="translate(${cx}, ${cy})">
-            <circle r="11" fill="#7AB890" opacity="0.6" />
-            <circle r="7" fill="#6AA87E" opacity="0.7" cx="0" cy="-2" />
+            <circle r="11" fill="var(--map-tree-out)" opacity="0.6" />
+            <circle r="7" fill="var(--map-tree-in)" opacity="0.7" cx="0" cy="-2" />
             <rect x="-1.5" y="8" width="3" height="6" fill="#8B7355" opacity="0.6" rx="1" />
           </g>
         `).join('')}
 
         ${housesData.map(([x, y]) => `
           <g transform="translate(${x}, ${y})">
-            <rect x="-12" y="-8" width="24" height="16" fill="#D4C4A0" stroke="#A68A6B" stroke-width="1" rx="1" />
+            <rect x="-12" y="-8" width="24" height="16" fill="var(--map-road)" stroke="#A68A6B" stroke-width="1" rx="1" />
             <polygon points="0,-16 -14,-8 14,-8" fill="#C4A87A" stroke="#A68A6B" stroke-width="1" />
           </g>
         `).join('')}
@@ -144,7 +212,6 @@
     }
 
     function renderInteractiveLayers() {
-      // 渲染 Markers (开启 pointer-events 以允许点击)
       const markersHtml = PARKS.map(park => `
         <div class="map-marker ${activeId === park.id ? 'active' : ''}" 
              style="left: ${park.mapX}%; top: ${park.mapY}%; pointer-events: auto;" 
@@ -155,7 +222,6 @@
       `).join('');
       document.getElementById('markers-layer').innerHTML = markersHtml;
 
-      // 渲染 Info Bubble (开启 pointer-events 以允许点击去看看按钮)
       const activePark = PARKS.find(p => p.id === activeId);
       if (activePark) {
         document.getElementById('bubble-layer').innerHTML = `
@@ -179,8 +245,31 @@
       }
     }
 
-    // 初始化渲染
     renderInteractiveLayers();
+
+    // ==========================================
+    // 全局主题同步逻辑
+    // ==========================================
+    const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+    const toggleContainer = document.getElementById('season-toggle-container');
+
+    function renderTheme(idx) {
+      localStorage.setItem('forest-theme', idx);
+      
+      document.body.classList.remove(...themeClasses);
+      document.body.classList.add(themeClasses[idx]);
+      
+      if (toggleContainer) {
+        toggleContainer.innerHTML = SEASONS.map((s, i) => `
+          <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
+            <span style="font-size: 20px;">${s.icon}</span>
+          </button>
+        `).join('');
+      }
+    }
+
+    const currentThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+    renderTheme(currentThemeIdx);
   </script>
 </body>
 </html>

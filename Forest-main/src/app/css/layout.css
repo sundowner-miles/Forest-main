@@ -80,10 +80,12 @@
   transition: color 0.2s ease;
   outline: none;
 }
+
 .nav-link.active {
   color: var(--fg) !important;
-  font-weight: 700;
+  font-weight: 700; /* 恢复为普通链接的字重，避免宽度跳动 */
 }
+
 .nav-link:hover, .nav-link:focus-visible { color: var(--fg); }
 
 /* 波浪下划线 */
@@ -117,6 +119,12 @@
   padding: 4px;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent; 
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 
 /* === PAGE HEADER & FOOTER === */

@@ -4,202 +4,546 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>随机逛 - 一起去森林浴吧</title>
-  <link rel="stylesheet" href="../forest.css">
-</head>
-<body style="margin: 0; padding: 0; background: var(--fg); min-height: 100vh; display: flex; flex-direction: column;">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       沉浸式模式专属样式
+       ========================================== */
+    body, html { overflow: hidden; margin: 0; padding: 0; background: #000; }
 
-  <nav class="navbar">
-    <a href="Home.html" class="navbar-logo"><span class="navbar-logo-icon">🌿</span>一起去森林浴吧～</a>
+    #nav-trigger { position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 999; }
     
-    <div style="display: flex; align-items: center; gap: 32px;">
+    .navbar {
+      position: fixed !important; top: 0; left: 0; width: 100%; z-index: 1000;
+      transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      box-sizing: border-box;
+    }
+    
+    #nav-trigger:hover + .navbar, .navbar:hover { transform: translateY(0); }
+
+    .window-frame {
+      position: fixed !important; top: 0 !important; left: 0 !important;
+      width: 100vw !important; height: 100vh !important;
+      border-radius: 0 !important; border: none !important; box-shadow: none !important;
+      z-index: 0; background: #000;
+    }
+
+    .fullscreen-btn {
+      position: fixed; bottom: 36px; right: 36px; width: 56px; height: 56px;
+      border-radius: 50%; background: rgba(0, 0, 0, 0.35); color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .fullscreen-btn:hover { background: rgba(0, 0, 0, 0.65); transform: scale(1.1); }
+    .fab-btn { left: 36px !important; right: auto !important; z-index: 100; }
+
+    /* ==========================================
+       新增：侧边分类筛选栏样式
+       ========================================== */
+    .filter-panel {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      /* 默认折叠状态：向右平移自身宽度，减去把手的24px以露出把手 */
+      transform: translateY(-50%) translateX(calc(100% - 24px)); 
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+    }
+    .filter-panel.open {
+      transform: translateY(-50%) translateX(0); /* 展开状态 */
+    }
+    
+    .filter-toggle {
+      width: 24px;
+      height: 80px;
+      background: rgba(30, 30, 30, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-right: none;
+      border-radius: 12px 0 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .filter-toggle:hover {
+      background: rgba(60, 60, 60, 0.7);
+      color: #fff;
+    }
+
+    .filter-content {
+      background: rgba(30, 30, 30, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-right: none;
+      border-radius: 20px 0 0 20px;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      gap: 6px;
+    }
+    .filter-item:hover, .filter-item.active {
+      color: #fff;
+      transform: scale(1.08);
+    }
+    .filter-item .f-icon { 
+      font-size: 26px; 
+      line-height: 1; 
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .filter-item .f-text { 
+      font-family: 'Quicksand', sans-serif; 
+      font-size: 10px; 
+      font-weight: 700; 
+      letter-spacing: 1px; 
+      text-transform: uppercase;
+    }
+    /* ==========================================
+       白噪音控制面板样式
+       ========================================== */
+    .sound-control {
+      position: fixed; bottom: 36px; right: 104px; /* 定位在全屏按钮左边 */
+      z-index: 100; display: flex; flex-direction: column; align-items: center;
+    }
+    .sound-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(0, 0, 0, 0.35); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; font-size: 22px;
+    }
+    .sound-btn:hover { background: rgba(0, 0, 0, 0.65); transform: scale(1.1); }
+    
+    .sound-menu {
+      position: absolute; bottom: 70px;
+      background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 8px 0;
+      width: 160px; display: none; flex-direction: column; transform-origin: bottom right;
+      animation: menuPop 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .sound-menu.open { display: flex; }
+    
+    @keyframes menuPop {
+      from { opacity: 0; transform: scale(0.8) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    
+    .sound-list-item {
+      padding: 12px 18px; color: rgba(255,255,255,0.7); font-family: 'Quicksand', sans-serif; font-size: 14px;
+      cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .sound-list-item:hover, .sound-list-item.active { color: #fff; background: rgba(255,255,255,0.1); }
+    .sound-list-item .s-label { display: flex; align-items: center; gap: 10px; }
+    
+    /* 播放时的动态跳动音轨 */
+    .playing-bars { display: none; gap: 3px; height: 12px; align-items: flex-end; }
+    .sound-list-item.active .playing-bars { display: flex; }
+    .bar { width: 3px; background: var(--fg); border-radius: 2px; animation: bounce 1s infinite alternate; }
+    .bar:nth-child(2) { animation-delay: 0.2s; }
+    .bar:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { from { height: 3px; } to { height: 12px; } }
+  </style>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <div id="nav-trigger"></div>
+  <nav class="navbar" style="background: rgba(253, 251, 247, 0.85); backdrop-filter: blur(10px);">
+    <a href="Home.html" class="navbar-logo">
+      <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+    </a>
+    <div class="navbar-actions">
       <ul class="navbar-links">
         <li><a href="Home.html" class="nav-link">首页</a></li>
         <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
         <li><a href="Random.html" class="nav-link active">随机逛</a></li>
         <li><a href="MapPage.html" class="nav-link">去哪儿逛</a></li>
       </ul>
+      <div class="navbar-season" title="轻轻拨动季节">
+        <div class="season-toggle" id="season-toggle-container"></div>
+      </div>
       <div class="navbar-tag">🌳 今日宜·发呆</div>
     </div>
   </nav>
 
-  <div class="page-container" style="flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 100%; padding: 0;">
-
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding-bottom: 60px; width: 100%; padding-left: 24px; padding-right: 24px; box-sizing: border-box; max-width: 1400px; margin: 0 auto;">
-      
-      <div class="window-frame" style="width: 95%; top: 10px; height: 88vh; min-height: 500px; position: relative;border: none; outline: none;">
-        
-        <img id="window-img" src="" alt="窗外风景" style="width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease;border: none; outline: none;" />
-        
-        <div id="window-location" style="position: absolute; top: 24px; right: 24px; background: rgba(0,0,0,0.4); border-radius: 16px; padding: 6px 14px; font-family: 'Caveat', cursive; font-size: 16px; color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);">
-        </div>
-
-        <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); padding: 80px 32px 32px; display: flex; justify-content: space-between; align-items: flex-end; box-sizing: border-box; pointer-events: none;">
-          
-          <div style="color: #fff; max-width: 60%; pointer-events: auto;">
-            <p id="window-caption" class="text-caption-hand" style="margin: 0 0 8px; font-style: italic; font-size: 1.2rem; text-shadow: 1px 1px 4px rgba(0,0,0,0.6);">
-            </p>
-            <span id="window-user" class="text-small" style="opacity: 0.85; text-shadow: 1px 1px 4px rgba(0,0,0,0.6);">
-            </span>
-          </div>
-
-          <span id="window-counter" style="font-family: 'Caveat', cursive; font-size: 16px; color: #fff; opacity: 0.7; text-shadow: 1px 1px 4px rgba(0,0,0,0.6);">
-          </span>
-        </div>
-
-        <button onclick="nextScene()" style="position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); color: #2c3e50; border: none; padding: 14px 32px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.2); backdrop-filter: blur(10px); transition: transform 0.2s, background 0.2s; pointer-events: auto; display: flex; align-items: center; gap: 8px;" 
-                onmouseover="this.style.background='#fff'; this.style.transform='translateX(-50%) scale(1.03)'" 
-                onmouseout="this.style.background='rgba(255,255,255,0.85)'; this.style.transform='translateX(-50%) scale(1)'">
-          换个地方逛逛 🌲
-        </button>
-
-      </div>
-
-      <p class="text-caption-hand" style="margin: 0; opacity: 0.6; text-align: center; max-width: 400px; margin-top: 8px;">
-        每一扇窗都是有人真实去过的地方<br />
-        愿你也能找到自己的那片森林 🌲
-      </p>
+  <div class="window-frame">
+    <div style="position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #000;">
+      <img id="blur-img" src="" style="width: 100%; height: 100%; object-fit: cover; filter: blur(60px) brightness(0.4) saturate(1.5); transform: scale(1.2); opacity: 0; transition: opacity 0.8s ease; position: absolute; top: 0; left: 0;" />
+      <video id="blur-video" autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover; filter: blur(60px) brightness(0.4) saturate(1.5); transform: scale(1.2); opacity: 0; transition: opacity 0.8s ease; position: absolute; top: 0; left: 0;"></video>
     </div>
+
+    <img id="window-img" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease; z-index: 1;" />   
+    <video id="window-video" autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease; z-index: 1;"></video>
+
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 20%; background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 2;"></div>
+    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 35%; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%); pointer-events: none; z-index: 2;"></div>
+
+    <div id="window-location" style="position: absolute; top: 24px; right: 24px; background: rgba(0,0,0,0.4); border-radius: 16px; padding: 6px 14px; font-family: 'Caveat', cursive; font-size: 16px; color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); z-index: 10;"></div>
+    
+    <div style="position: absolute; bottom: 36px; left: 110px; color: #fff; max-width: 50%; pointer-events: auto; z-index: 10;">
+      <p id="window-caption" class="text-caption-hand" style="margin: 0 0 8px; font-style: italic; font-size: 1.4rem; text-shadow: 1px 1px 6px rgba(0,0,0,0.8);"></p>
+      <span id="window-user" class="text-small" style="opacity: 0.9; text-shadow: 1px 1px 6px rgba(0,0,0,0.8);"></span>
+    </div>
+
+    <button onclick="nextScene()" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); color: #2c3e50; border: none; padding: 14px 32px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.2); backdrop-filter: blur(10px); transition: transform 0.2s, background 0.2s; pointer-events: auto; display: flex; align-items: center; gap: 8px; z-index: 10;" onmouseover="this.style.background='#fff'; this.style.transform='translateX(-50%) scale(1.03)'" onmouseout="this.style.background='rgba(255,255,255,0.85)'; this.style.transform='translateX(-50%) scale(1)'">
+      换个地方逛逛 🌲
+    </button>
   </div>
 
-  <button class="fab-btn" onclick="toggleModal(true)" title="投稿我的窗外">+</button>
+  <div id="filter-panel" class="filter-panel closed">
+    <div class="filter-toggle" onclick="toggleFilterPanel()">
+      <span id="filter-toggle-icon">◀</span>
+    </div>
+    <div class="filter-content">
+      <div class="filter-item active" data-tag="all" onclick="applyFilter('all', this)">
+        <span class="f-icon">🌍</span><span class="f-text">全部</span>
+      </div>
+      <div class="filter-item" data-tag="spring" onclick="applyFilter('spring', this)">
+        <span class="f-icon">🌸</span><span class="f-text">春</span>
+      </div>
+      <div class="filter-item" data-tag="summer" onclick="applyFilter('summer', this)">
+        <span class="f-icon">🌿</span><span class="f-text">夏</span>
+      </div>
+      <div class="filter-item" data-tag="autumn" onclick="applyFilter('autumn', this)">
+        <span class="f-icon">🍁</span><span class="f-text">秋</span>
+      </div>
+      <div class="filter-item" data-tag="winter" onclick="applyFilter('winter', this)">
+        <span class="f-icon">❄️</span><span class="f-text">冬</span>
+      </div>
+      <div class="filter-item" data-tag="sunny" onclick="applyFilter('sunny', this)">
+        <span class="f-icon">☀️</span><span class="f-text">晴</span>
+      </div>
+      <div class="filter-item" data-tag="rainy" onclick="applyFilter('rainy', this)">
+        <span class="f-icon">🌧️</span><span class="f-text">雨</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="sound-control">
+  <div id="sound-menu" class="sound-menu">
+    <div class="sound-list-item active" onclick="selectSound(0, this)">
+      <div class="s-label"><span>🌊</span> 湖畔波浪</div>
+      <div class="playing-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+    </div>
+    <div class="sound-list-item" onclick="selectSound(1, this)">
+      <div class="s-label"><span>🌱</span> 回归自然</div>
+      <div class="playing-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+    </div>
+    <div class="sound-list-item" onclick="selectSound(2, this)">
+      <div class="s-label"><span>🐦</span> 清晰鸟鸣</div>
+      <div class="playing-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+    </div>
+    <div class="sound-list-item" onclick="selectSound(3, this)">
+      <div class="s-label"><span>🍃</span> 草木之声</div>
+      <div class="playing-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+    </div>
+    <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 6px 0;"></div>
+    <div class="sound-list-item" onclick="toggleMute(this)" style="justify-content: center; color: #e89eb3; font-weight: bold;">
+       🔇 关闭声音
+    </div>
+  </div>
+  <button class="sound-btn" onclick="toggleSoundMenu()" title="聆听白噪音">
+    <span id="sound-btn-icon">🔊</span>
+  </button>
+</div>
+
+<audio id="bg-audio" loop preload="auto"></audio>
+
+  <button class="fab-btn" onclick="toggleModal(true)">+</button>
+  <button class="fullscreen-btn" onclick="toggleFullScreen()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+  </button>
 
   <div id="submit-modal" class="modal-overlay" style="display: none;" onclick="handleOverlayClick(event)">
     <div class="modal-box">
-      <button class="modal-close" onclick="toggleModal(false)">✕</button>
-
+      <button class="sound-btn" title="播放白噪音">
+        <span id="sound-btn-icon">🔊</span>
+      </button>
       <div id="modal-success-view" style="display: none; text-align: center; padding: 20px 0;">
-        <div style="font-size: 56px; margin-bottom: 16px;">🌿</div>
-        <h3 class="text-medium" style="margin: 0 0 10px;">谢谢你的分享！</h3>
-        <p class="text-body" style="margin: 0; opacity: 0.8;">
-          你的森林窗景已收到，<br />正在种植进地图里～
-        </p>
+        <div style="font-size: 56px; margin-bottom: 16px;">🌿</div><h3 class="text-medium">谢谢你的分享！</h3>
       </div>
-
       <form id="submit-form" onsubmit="handleFormSubmit(event)">
         <h3 class="text-medium" style="margin: 0 0 6px; color: var(--fg);">📌 投稿我的窗外</h3>
-        <p class="text-small" style="margin: 0 0 24px; opacity: 0.7;">分享你镜头里的森林，让更多人看见</p>
-
-        <div class="form-group">
-          <label class="form-label">昵称</label>
-          <input class="form-input" type="text" placeholder="云游仙人 / Tomo ..." required />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">地点</label>
-          <input class="form-input" type="text" placeholder="北京香山 / 京都岚山 ..." required />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">图片链接 (可选)</label>
-          <input class="form-input" type="url" placeholder="https://..." />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">一句话描述</label>
-          <textarea class="form-input" rows="3" placeholder="那天风很轻，树叶在说话..." required></textarea>
-        </div>
-
-        <button class="btn-primary" type="submit" style="width: 100%; justify-content: center; margin-top: 4px;">
-          🌱 种下这扇窗
-        </button>
+        <button class="btn-primary" type="button" style="width: 100%; justify-content: center; margin-top: 4px;" onclick="handleFormSubmit(event)">🌱 种下这扇窗</button>
       </form>
     </div>
   </div>
 
-  <footer class="site-footer">
-    <div class="footer-leaves">🌱 🌿 🍃 🌾 🌿 🌱</div>
-    <p class="text-small" style="margin: 0; opacity: 0.6;">
-      一起去森林浴吧～ · 随时开始，即刻放松
-    </p>
-  </footer>
-
   <script src="../data.js"></script>
-
   <script>
-    // 1. 初始化数据：打乱场景数组
-    function shuffleArray(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
+    // === 修复滚动条消失导致的元素偏移问题 ===
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) { // 如果存在实体滚动条 (如 Windows 系统)
+      // 1. 补偿导航栏的右侧内边距
+      document.querySelector('.navbar').style.paddingRight = `calc(clamp(20px, 5vw, 40px) + ${scrollbarWidth}px)`;
+      
+      // 2. 为了追求完美，把右上角的地点标签、右侧折叠面板、右下角按钮也往左推回原位
+      document.getElementById('window-location').style.right = `${24 + scrollbarWidth}px`;
+      document.querySelector('.filter-panel').style.right = `${scrollbarWidth}px`;
+      document.querySelector('.sound-control').style.right = `${104 + scrollbarWidth}px`;
+      document.querySelector('.fullscreen-btn').style.right = `${36 + scrollbarWidth}px`;
     }
-    const sceneQueue = shuffleArray(WINDOW_SCENES);
+    function shuffleArray(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+    
+    // 当前正在使用的渲染队列
+    let currentFilteredScenes = [...WINDOW_SCENES];
+    let sceneQueue = shuffleArray(currentFilteredScenes);
     let currentIndex = 0;
 
-    // 2. DOM 元素获取
     const imgEl = document.getElementById('window-img');
+    const blurImg = document.getElementById('blur-img');
+    const videoEl = document.getElementById('window-video'); 
+    const blurVideo = document.getElementById('blur-video');
+    
     const locationEl = document.getElementById('window-location');
     const captionEl = document.getElementById('window-caption');
     const userEl = document.getElementById('window-user');
-    const counterEl = document.getElementById('window-counter');
     
     const modalEl = document.getElementById('submit-modal');
     const formView = document.getElementById('submit-form');
     const successView = document.getElementById('modal-success-view');
+    const audioEl = document.getElementById('bg-audio');
+    let isMuted = false;
+    
 
-    // 图片加载完成时触发渐显动画
-    imgEl.onload = function() {
-      imgEl.style.opacity = 1;
+    // === 白噪音悬浮展开逻辑 (优化版：增加延迟容错) ===
+        const soundControl = document.querySelector('.sound-control');
+        const soundMenu = document.getElementById('sound-menu');
+        let soundMenuTimeout; // 定义一个计时器变量
+
+        if (soundControl && soundMenu) {
+          // 鼠标移入容器：立刻清除收起计时器，并展开面板
+          soundControl.addEventListener('mouseenter', () => {
+            clearTimeout(soundMenuTimeout); 
+            soundMenu.classList.add('open');
+          });
+
+          // 鼠标移出容器：不立刻收起，而是设置一个 500ms 的延迟
+          soundControl.addEventListener('mouseleave', () => {
+            soundMenuTimeout = setTimeout(() => {
+              soundMenu.classList.remove('open');
+            }, 200); // 200 毫秒缓冲时间，可以根据手感调整
+          });
+        }
+
+    window.selectSound = function(idx, el) {
+      document.querySelectorAll('.sound-list-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+      isMuted = false;
+      document.getElementById('sound-btn-icon').innerText = '🔊';
+      
+      // 修改这里：从 data.js 获取 url
+      audioEl.src = WHITE_NOISES[idx].url; 
+      audioEl.volume = 0.6;
+      audioEl.play().catch(e => console.log("播放需要用户交互", e));
     };
 
-    // 3. 渲染场景函数
+    // 静音处理
+    window.toggleMute = function() {
+      document.querySelectorAll('.sound-list-item').forEach(item => item.classList.remove('active'));
+      isMuted = true;
+      audioEl.pause();
+      document.getElementById('sound-btn-icon').innerText = '🔇';
+      document.getElementById('sound-menu').classList.remove('open');
+    };
+
+    function initAutoPlay() {
+      // 修改这里
+      audioEl.src = WHITE_NOISES[0].url; 
+      audioEl.volume = 0.6;
+      
+      let playPromise = audioEl.play();
+      // 尝试自动播放，若失败则监听页面点击
+      audioEl.play().catch(() => {
+        document.body.addEventListener('click', function autoStart() {
+          if(!isMuted) audioEl.play();
+          document.body.removeEventListener('click', autoStart);
+        }, { once: true });
+      });
+    }
+
+    // === 渲染核心逻辑 ===
     function renderCurrentScene() {
       const scene = sceneQueue[currentIndex % sceneQueue.length];
-      
-      // 更新文本信息
       locationEl.innerHTML = `📍 ${scene.location}`;
       captionEl.innerHTML = `"${scene.caption}"`;
       userEl.innerHTML = `— ${scene.user}`;
-      counterEl.innerHTML = `${(currentIndex % sceneQueue.length) + 1} / ${sceneQueue.length}`;
       
-      // 替换图片 Src (会触发 imgEl.onload 然后显示)
-      imgEl.src = scene.url;
-      imgEl.alt = scene.location;
+      const mediaUrl = scene.url;
+      const isVideoCurrent = mediaUrl.toLowerCase().endsWith('.mp4');
+
+      if (isVideoCurrent) {
+        imgEl.style.opacity = 0; blurImg.style.opacity = 0;
+        
+        videoEl.src = mediaUrl; blurVideo.src = mediaUrl;
+        videoEl.load(); blurVideo.load();
+        
+        videoEl.oncanplay = () => {
+          const isVerticalMedia = videoEl.videoWidth < videoEl.videoHeight;
+          const isLandscapeScreen = window.innerWidth > window.innerHeight;
+          
+          if (isVerticalMedia && isLandscapeScreen) {
+            videoEl.style.objectFit = 'contain';
+          } else {
+            videoEl.style.objectFit = 'cover';
+          }
+
+          videoEl.style.opacity = 1; blurVideo.style.opacity = 1;
+          videoEl.play().catch(e => console.log(e));
+          blurVideo.play().catch(e => console.log(e));
+        };
+      } else {
+        videoEl.style.opacity = 0; blurVideo.style.opacity = 0;
+        setTimeout(() => { videoEl.pause(); blurVideo.pause(); }, 800); 
+        
+        imgEl.src = mediaUrl; blurImg.src = mediaUrl;
+        
+        imgEl.onload = () => { 
+          const isVerticalMedia = imgEl.naturalWidth < imgEl.naturalHeight;
+          const isLandscapeScreen = window.innerWidth > window.innerHeight;
+          
+          if (isVerticalMedia && isLandscapeScreen) {
+            imgEl.style.objectFit = 'contain';
+          } else {
+            imgEl.style.objectFit = 'cover';
+          }
+          
+          imgEl.style.opacity = 1; blurImg.style.opacity = 1;
+        };
+      }
     }
 
-    // 4. 切换下一场景
+    // 切换下一场景
     window.nextScene = function() {
-      // 先让当前图片淡出
-      imgEl.style.opacity = 0;
+      imgEl.style.opacity = 0; blurImg.style.opacity = 0;
+      videoEl.style.opacity = 0; blurVideo.style.opacity = 0;
+      setTimeout(() => { currentIndex++; renderCurrentScene(); }, 800);
+    };
+
+    // === 侧边栏展开与折叠 ===
+    window.toggleFilterPanel = function() {
+      const panel = document.getElementById('filter-panel');
+      const icon = document.getElementById('filter-toggle-icon');
+      if (panel.classList.contains('open')) {
+        panel.classList.remove('open');
+        icon.innerText = '◀';
+      } else {
+        panel.classList.add('open');
+        icon.innerText = '▶';
+      }
+    };
+
+    // === 智能筛选逻辑 ===
+    window.applyFilter = function(filterTag, el) {
+      // 1. 更新 UI 选中状态
+      document.querySelectorAll('.filter-item').forEach(item => item.classList.remove('active'));
+      if(el) el.classList.add('active');
+
+      // 2. 根据标签和文本模糊匹配
+      if (filterTag === 'all') {
+        currentFilteredScenes = [...WINDOW_SCENES];
+      } else {
+        currentFilteredScenes = WINDOW_SCENES.filter(scene => {
+          // 模糊搜索：根据地点和描述中的关键字进行匹配
+          const str = (scene.caption + scene.location).toLowerCase();
+          switch(filterTag) {
+            case 'spring': return /春|樱|花|草/.test(str);
+            case 'summer': return /夏|绿|雨林|树|荷/.test(str);
+            case 'autumn': return /秋|枫|红叶|黄/.test(str);
+            case 'winter': return /冬|雪|冰|白/.test(str);
+            case 'sunny':  return /晴|光|阳|晨|日/.test(str);
+            case 'rainy':  return /雨|雾|湿|水|露/.test(str);
+            default: return true;
+          }
+        });
+
+        // 如果该分类下没有素材，进行兜底处理，防止页面黑屏
+        if (currentFilteredScenes.length === 0) {
+          alert("哎呀，这个分类下暂时没有窗景哦，先看看别的吧~");
+          currentFilteredScenes = [...WINDOW_SCENES];
+          document.querySelectorAll('.filter-item').forEach(item => item.classList.remove('active'));
+          document.querySelector('.filter-item[data-tag="all"]').classList.add('active');
+        }
+      }
+
+      // 3. 重置队列并渲染
+      sceneQueue = shuffleArray(currentFilteredScenes);
+      currentIndex = 0;
       
-      // 配合 CSS 里的 0.8s 动画，这里改为等待 800ms 渐隐完毕后，再更新数据加载下一张
+      // 先将当前画面淡出
+      imgEl.style.opacity = 0; blurImg.style.opacity = 0;
+      videoEl.style.opacity = 0; blurVideo.style.opacity = 0;
+      
       setTimeout(() => {
-        currentIndex++;
         renderCurrentScene();
       }, 800);
     };
 
-    // 5. 模态框交互逻辑
+
+    // 模态框及全屏控制
     window.toggleModal = function(show) {
-      if (show) {
-        modalEl.style.display = 'flex';
-        formView.style.display = 'block';
-        successView.style.display = 'none';
-        formView.reset(); // 清空表单
-      } else {
-        modalEl.style.display = 'none';
-      }
+      if (show) { modalEl.style.display = 'flex'; formView.style.display = 'block'; successView.style.display = 'none'; formView.reset(); } 
+      else { modalEl.style.display = 'none'; }
+    };
+    window.handleOverlayClick = function(e) { if (e.target === modalEl) toggleModal(false); };
+    window.handleFormSubmit = function(e) { e.preventDefault(); formView.style.display = 'none'; successView.style.display = 'block'; setTimeout(() => toggleModal(false), 1800); };
+    window.toggleFullScreen = function() {
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(e => console.log(e)); } 
+      else { if (document.exitFullscreen) document.exitFullscreen(); }
     };
 
-    window.handleOverlayClick = function(e) {
-      // 点击遮罩层外围时关闭
-      if (e.target === modalEl) {
-        toggleModal(false);
-      }
-    };
+    // === 主题与初始化 ===
+    const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+    const toggleContainer = document.getElementById('season-toggle-container');
 
-    window.handleFormSubmit = function(e) {
-      e.preventDefault();
+    function renderTheme(idx) {
+      // 1. 保存选择到本地
+      localStorage.setItem('forest-theme', idx);
       
-      // 隐藏表单，显示成功视图
-      formView.style.display = 'none';
-      successView.style.display = 'block';
+      // 2. 切换 Body 类名
+      document.body.classList.remove(...themeClasses); 
+      document.body.classList.add(themeClasses[idx]);
+      
+      // 3. 动态渲染季节切换按钮（之前就是这里不小心被删掉了）
+      if (toggleContainer && typeof SEASONS !== 'undefined') {
+        toggleContainer.innerHTML = SEASONS.map((s, i) => `
+          <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
+            <span style="font-size: 20px;">${s.icon}</span>
+          </button>
+        `).join('');
+      }
+    }
 
-      // 模拟提交等待 1.8 秒后自动关闭
-      setTimeout(() => {
-        toggleModal(false);
-      }, 1800);
-    };
-
-    // 初始化第一次渲染
+    // 初始化读取本地缓存主题
+    const currentThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+    renderTheme(currentThemeIdx);
+    
+    // 初始化调用，让页面一进来就显示内容
     renderCurrentScene();
+    initAutoPlay(); // 如果你有加白噪音，记得保留这行  
   </script>
 </body>
 </html>

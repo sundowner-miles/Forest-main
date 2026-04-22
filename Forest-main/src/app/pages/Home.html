@@ -8,73 +8,77 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/layout.css">
-  <link href="https://fonts.googleapis.com/css2?family=Gaegu&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    /* === 核心增强样式 === */
+  <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>    
+/* === 1. 全屏层级管理 (核心修改) === */
     
-    /* 1. 全屏贯穿背景 */
+    /* 最底层：原始背景图 */
     #hero-bg {
-      position: fixed; /* 固定背景，不随滚动条移动 */
+      position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
+      filter: contrast(1.2) brightness(0.9) blur(4px);
+      border-radius: 16px;
+      transform: scale(1.05);
       object-fit: cover;
-      z-index: -1;
+      z-index: -2; /* 设置为 -2 */
       transition: opacity 0.8s ease, object-position 0.8s ease;
     }
-
-    /* 2. 导航栏布局优化：让链接与标签靠近 */
-    .navbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 28px; /* 调整跳转按钮与小标签的距离 */
-      margin-left: auto;
-    }
-
-    /* 3. 加粗波浪下划线 */
-    .nav-link {
-      position: relative;
-      text-decoration: none;
-      padding-bottom: 6px;
-      transition: color 0.3s ease;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
+    .combined-overlay {
+      position: fixed;
+      top: 0;
       left: 0;
       width: 100%;
-      height: 8px;
-      background-color: var(--primary); /* 颜色随主题变化 */
-      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0,4 Q5,8 10,4 T20,4' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
-      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0,4 Q5,8 10,4 T20,4' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
-      -webkit-mask-size: 18px 100%;
-      mask-size: 18px 100%;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .nav-link:hover::after, .nav-link.active::after {
-      transform: scaleX(1);
-    }
-    .nav-link.active {
-      color: var(--primary) !important;
-      font-weight: 700;
+      height: 100%;
+      background: radial-gradient(circle at center, 
+                    transparent 20%, 
+                    rgb(255, 255, 255) 70%,
+                    rgb(0, 0, 0) 100%);
+      /* 再叠一层 box-shadow 增加硬暗角 */
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.5);
+      pointer-events: none;
+      z-index: -1;
     }
 
-    /* 4. 全局主题过渡 */
-    body {
-      transition: background-color 0.6s ease, color 0.6s ease;
+    /* === 2. 诗句缓缓浮入动画 === */
+    @keyframes lyricsFadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) rotate(var(--rand-rotate, 0deg));
+        filter: blur(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotate(var(--rand-rotate, 0deg));
+        filter: blur(0);
+      }
     }
-/* === 飞鸟信件增强版布局 === */
+
+    #season-lyrics span {
+      display: inline-block;
+      opacity: 0;
+      animation: lyricsFadeInUp 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      text-shadow: 0 4px 10px rgba(255,255,255,0.5);
+    }
+
+    /* === 3. 季节特定的诗句配色 (浅色系) === */
+    .theme-spring #season-lyrics span { color: rgb(252, 235, 240); } 
+    .theme-summer #season-lyrics span { color: rgb(217, 253, 236); } 
+    .theme-autumn #season-lyrics span { color: rgb(154, 101, 22); } 
+    .theme-winter #season-lyrics span { color: rgba(66, 94, 117, 0.9); }  
+
+    /* === 4. 飞鸟信件布局 (保持原有) === */
     .letter-wall {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: flex-start;
       gap: 40px;
-      perspective: 1000px; /* 为错落感增加一点点透视 */
+      perspective: 1000px;
+      position: relative;
+      z-index: 1; /* 确保在遮罩层之上 */
     }
 
     .bird-letter {
@@ -85,8 +89,7 @@
       border-radius: 2px;
       transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
       
-      /* 核心：纸张纹理背景 */
-      /* 使用了一个极其微弱的 SVG 噪声纹理和渐变叠加 */
+      /* 核心：纸张纹理背景。使用微弱的 SVG 噪声纹理和渐变叠加 */
       background-image: 
         url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
         linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%);
@@ -172,7 +175,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      /* color: var(--foreground); */
     }
     .letter-list li span {
       font-family: var(--font-hand);
@@ -184,7 +186,7 @@
     .letter-footer {
       margin-top: 30px;
       text-align: right;
-      font-family: 'Gaegu', cursive;
+      font-family: var(--font-hand);
       opacity: 0.5;
     }
 
@@ -197,13 +199,12 @@
 </head>
 <body class="theme-spring"> <img id="hero-bg" src="" alt="季节背景" />
 
+  
 <nav class="navbar" style="background: rgba(253, 251, 247, 0.75); backdrop-filter: blur(10px);">
-  <!-- 左侧 Logo -->
   <a href="Home.html" class="navbar-logo">
     <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
   </a>
-  
-  <!-- 右侧操作区：导航链接 + 季节切换 + 标签 -->
+
   <div class="navbar-actions">
     <ul class="navbar-links">
       <li><a href="Home.html" class="nav-link active">首页</a></li>
@@ -212,7 +213,6 @@
       <li><a href="MapPage.html" class="nav-link">去哪儿逛</a></li>
     </ul>
 
-    <!-- 季节切换器（融入导航栏，保留原容器ID） -->
     <div class="navbar-season" title="轻轻拨动季节">
       <div class="season-toggle" id="season-toggle-container"></div>
     </div>
@@ -321,63 +321,65 @@
     const toggleContainer = document.getElementById('season-toggle-container');
 
     function renderSeason(idx) {
-      currentSeasonIdx = idx;
-      const season = SEASONS[idx];
-      
-      // 1. 背景平滑过渡
-      heroBg.style.opacity = 0;
-      setTimeout(() => {
-        heroBg.src = season.bg;
-        heroBg.style.objectPosition = season.pos || "center";
-        heroBg.style.opacity = 1;
-      }, 300);
+          currentSeasonIdx = idx;
+          const season = SEASONS[idx];
 
-      // 2. 核心：竖排随机错落小诗
-      const text = season.icon + " " + season.hint;
-      const lyricsContainer = document.getElementById('season-lyrics');
-      lyricsContainer.innerHTML = ''; 
+          // 【新增】保存当前选择的主题到本地
+          localStorage.setItem('forest-theme', idx);
 
-      // 使用 [...text] 确保 Emoji 不乱码
-      [...text].forEach((char, i) => {
-        const span = document.createElement('span');
-        span.innerText = char;
-        span.style.display = 'inline-block';
-        span.style.fontFamily = "'Caveat', cursive";
-        span.style.color = 'var(--foreground)';
-        span.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        span.style.transitionDelay = `${i * 0.05}s`; 
+          // 1. 背景平滑过渡
+          heroBg.style.opacity = 0;
+          setTimeout(() => {
+            heroBg.src = season.bg;
+            heroBg.style.objectPosition = season.pos || "center";
+            heroBg.style.opacity = 1;
+          }, 300);
 
-        // 字体明显变化：由小到大
-        const sizeGrowth = Math.pow(i, 1.4) * 1.5; 
-        const fontSize = 24 + sizeGrowth;
-        span.style.fontSize = `${fontSize}px`;
+          // 2. 核心：竖排随机错落小诗 (加入缓缓浮入效果)
+          const text = season.icon + " " + season.hint;
+          const lyricsContainer = document.getElementById('season-lyrics');
+          lyricsContainer.innerHTML = ''; 
 
-        // 左右随机错落 (-40px 到 40px)
-        const randomX = (Math.random() - 0.5) * 90; 
-        const randomRotate = (Math.random() - 0.5) * 20;
+          [...text].forEach((char, i) => {
+            const span = document.createElement('span');
+            span.innerText = char;
+            span.style.fontFamily = "'Caveat', cursive";
+            
+            // 字体由小到大
+            const sizeGrowth = Math.pow(i, 1.4) * 1.5; 
+            const fontSize = 24 + sizeGrowth;
+            span.style.fontSize = `${fontSize}px`;
 
-        span.style.transform = `translateX(${randomX}px) rotate(${randomRotate}deg)`;
-        
-        // 垂直间距：根据字号自动调整
-        span.style.margin = `${2 + i * 0.3}px 0`;
+            // 随机错落位移与旋转角度
+            const randomX = (Math.random() - 0.5) * 100; 
+            const randomRotate = (Math.random() - 0.5) * 20;
 
-        lyricsContainer.appendChild(span);
-      });
+            // 仅保留 X 轴水平位移，旋转交给 CSS 动画完成
+            span.style.transform = `translateX(${randomX}px)`;
+            span.style.margin = `${4}px 0`;
+            
+            // 【新增】设置 CSS 变量供动画读取，并设置逐字延迟
+            span.style.setProperty('--rand-rotate', `${randomRotate}deg`);
+            span.style.animationDelay = `${i * 0.15}s`; 
 
-      // 3. 切换主题类
-      document.body.classList.remove(...themeClasses);
-      document.body.classList.add(themeClasses[idx]);
-      
-      // 4. 渲染按钮
-      toggleContainer.innerHTML = SEASONS.map((s, i) => `
-        <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderSeason(${i})" style="cursor: pointer;">
-          <span style="font-size: 20px;">${s.icon}</span>
-        </button>
-      `).join('');
-    }
+            lyricsContainer.appendChild(span);
+          });
 
-    // 初始化
-    renderSeason(0);
+          // 3. 切换主题类 (触发 CSS 中的浅色系配色)
+          document.body.classList.remove(...themeClasses);
+          document.body.classList.add(themeClasses[idx]);
+
+          // 4. 渲染按钮
+          toggleContainer.innerHTML = SEASONS.map((s, i) => `
+            <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderSeason(${i})" style="cursor: pointer;">
+              <span style="font-size: 20px;">${s.icon}</span>
+            </button>
+          `).join('');
+        }
+
+        // 【修改】初始化时读取本地保存的主题，默认为 0 (春)
+        const savedTheme = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+        renderSeason(savedTheme);
   </script>
 </body>
 </html>

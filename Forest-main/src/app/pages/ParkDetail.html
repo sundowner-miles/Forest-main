@@ -4,26 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>公园详情 - 一起去森林浴吧</title>
-  <link rel="stylesheet" href="../forest.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body style="margin: 0; padding: 0; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column;">
 
-  <nav class="navbar">
-    <a href="Home.html" class="navbar-logo"><span class="navbar-logo-icon">🌿</span>一起去森林浴吧～</a>
-    
-    <div style="display: flex; align-items: center; gap: 32px;">
-      
-      <ul class="navbar-links">
-        <li><a href="Home.html" class="nav-link">首页</a></li>
-        <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
-        <li><a href="Random.html" class="nav-link">随机逛</a></li>
-        <li><a href="MapPage.html" class="nav-link active">去哪儿逛</a></li>
-      </ul>
-      
-      <div class="navbar-tag">🌳 今日宜·发呆</div>
-      
+<nav class="navbar" style="background: rgba(253, 251, 247, 0.75); backdrop-filter: blur(10px);">
+  <a href="Home.html" class="navbar-logo">
+    <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+  </a>
+
+  <div class="navbar-actions">
+    <ul class="navbar-links">
+      <li><a href="Home.html" class="nav-link">首页</a></li>
+      <li><a href="Guide.html" class="nav-link">怎么逛</a></li>
+      <li><a href="Random.html" class="nav-link">随机逛</a></li>
+      <li><a href="MapPage.html" class="nav-link active">去哪儿逛</a></li>
+    </ul>
+
+    <div class="navbar-season" title="轻轻拨动季节">
+      <div class="season-toggle" id="season-toggle-container"></div>
     </div>
-  </nav>
+
+    <div class="navbar-tag">🌳 今日宜·发呆</div>
+  </div>
+</nav>
 
   <div id="app-container" style="flex: 1;">
     </div>
@@ -254,6 +262,33 @@
 
     // 初始化渲染页面
     renderApp();
+    // ==========================================
+    // 全局主题同步逻辑 (无背景大图版)
+    // ==========================================
+    const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+    const toggleContainer = document.getElementById('season-toggle-container');
+
+    function renderTheme(idx) {
+      // 1. 保存选择
+      localStorage.setItem('forest-theme', idx);
+      
+      // 2. 切换 Body 类名
+      document.body.classList.remove(...themeClasses);
+      document.body.classList.add(themeClasses[idx]);
+      
+      // 3. 重新渲染按钮高亮状态
+      if (toggleContainer) {
+        toggleContainer.innerHTML = SEASONS.map((s, i) => `
+          <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
+            <span style="font-size: 20px;">${s.icon}</span>
+          </button>
+        `).join('');
+      }
+    }
+
+    // 初始化读取本地缓存主题
+    const currentThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+    renderTheme(currentThemeIdx);
   </script>
 </body>
 </html>
