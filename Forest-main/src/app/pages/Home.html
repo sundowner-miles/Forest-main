@@ -10,6 +10,15 @@
   <link rel="stylesheet" href="../css/layout.css">
   <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script>
+    // 抢在页面渲染前，提前把主题 class 加到 html 或 body 上，彻底消除闪烁
+    (function() {
+      const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+      const savedThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+      // 直接把 class 塞给最外层的 <html> 节点
+      document.documentElement.className = themeClasses[savedThemeIdx];
+    })();
+  </script>
 <style>    
 /* === 1. 全屏层级管理 (核心修改) === */
     
@@ -202,7 +211,9 @@
   
 <nav class="navbar" style="background: rgba(253, 251, 247, 0.75); backdrop-filter: blur(10px);">
   <a href="Home.html" class="navbar-logo">
-    <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+    <!-- 删掉🌿表情，换成自定义图片 -->
+    <img src="../imgs/logo1.png" class="navbar-logo-icon" alt="logo">
+    一起去森林浴吧～
   </a>
 
   <div class="navbar-actions">
@@ -256,13 +267,14 @@
           <div class="bird-icon">🕊️</div>
           <div class="post-stamp">POSTED</div>
           <div class="letter-inner">
-            <div style="font-size: 32px; margin-bottom: 15px;">🌬️</div>
+            <div style="font-size: 32px; margin-bottom: 15px;">🌳</div>
             <p class="text-caption-hand" style="line-height: 1.8; font-size: 21px;">
-              "这里没有算法推荐，<br>
-              只有风吹树叶<br>
-              和心跳变慢的声音。"
+              "草在结它的种子<br>
+              风在摇它的叶子<br>
+              我们站着，不说话<br>
+              就十分美好。"
             </p>
-            <div class="letter-footer">— 森林的私语</div>
+            <div class="letter-footer">— 顾城《门前》</div>
           </div>
         </div>
 

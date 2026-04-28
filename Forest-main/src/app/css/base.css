@@ -14,6 +14,33 @@ body {
   margin: 0;
   padding: 0;
 }
+/* ============================================
+   页面无损淡入特效 (利用幕布原理，不破坏 fixed 布局)
+   ============================================ */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg); /* 自动读取当前主题的背景色 */
+  z-index: 999999;       /* 盖住所有元素 */
+  pointer-events: none;  /* 关键：让鼠标穿透，绝对不影响点击 */
+  animation: curtain-fade-out 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes curtain-fade-out {
+  0% { 
+    opacity: 1; 
+    backdrop-filter: blur(10px); /* 刚加载时自带一点模糊感 */
+  }
+  100% { 
+    opacity: 0; 
+    backdrop-filter: blur(0);
+    visibility: hidden; /* 动画结束后彻底隐藏，释放性能 */
+  }
+}
 
 /* === 基础元素 === */
 h1, h2, h3, .navbar-logo, .season-arrow, .text-caption-hand, #season-lyrics span, .letter-footer {
@@ -73,3 +100,122 @@ a {
 /* 颜色辅助类 */
 .text-green { color: var(--fg); }
 .text-soil { color: var(--soil); }
+
+/* ============================================
+   鼠标跟随粒子动画特效
+   ============================================ */
+@keyframes particle-drift {
+  0% { 
+    /* 初始状态：鼠标中心，稍微缩小 */
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.5); 
+    opacity: 0.8; 
+  }
+  100% { 
+    /* 结束状态：向四周随机飘散、下落、旋转，并放大渐隐 */
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.2); 
+    opacity: 0; 
+  }
+}
+
+.mouse-particle {
+  position: fixed;
+  pointer-events: none; /* 关键：让鼠标穿透，绝对不能阻挡页面上的点击操作 */
+  z-index: 9999;        /* 保证飘在所有元素的最顶层 */
+  animation: particle-drift 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  will-change: transform, opacity; /* 开启硬件加速，让动画更流畅，不卡顿 */
+  text-shadow: 0 4px 8px rgba(0,0,0,0.15); /* 增加一点光影立体感 */
+}
+
+@keyframes page-fade-in {
+  0% { 
+    opacity: 0; 
+    filter: blur(4px); /* 刚进来时微微模糊，更有沉浸感 */
+  }
+  100% { 
+    opacity: 1; 
+    filter: blur(0); 
+  }
+}
+
+/* ============================================
+   回到顶部按钮 (毛玻璃治愈风格)
+   ============================================ */
+.back-to-top {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 50px;
+  height: 50px;
+  background: rgba(30, 30, 30, 0.5); /* 暗色半透明 */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+  
+  /* 初始隐藏状态 */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   回到顶部按钮 (主题色绑定版)
+   ============================================ */
+.back-to-top {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 50px;
+  height: 50px;
+  
+  /* 核心：绑定主题变量 */
+  background: var(--fg);           /* 使用当前季节的主题色 */
+  color: var(--bg);                /* 图标颜色使用背景色，形成反差 */
+  border: 2px solid var(--bg);     /* 边框使用背景色，增加层次感 */
+  
+  /* 保持毛玻璃效果（可选，去掉 background 的 rgba 即可） */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+  
+  /* 动画状态 */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 8px 20px var(--soil-faint); /* 阴影也使用主题变量 */
+}
+
+/* 显示状态 */
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  /* 悬浮时通过滤镜微调亮度，无需手动写死颜色 */
+  filter: brightness(1.1); 
+  transform: scale(1.1) translateY(-5px);
+  box-shadow: 0 12px 28px var(--soil-faint);
+}
+
+.back-to-top span {
+  transform: translateY(-1px);
+}

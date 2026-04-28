@@ -25,12 +25,12 @@
   --background: #fffafa; /* 极淡的樱花白 */
   --foreground: #4a3b3f; /* 柔和深褐色 */
   
-  --primary: #e89eb3; /* 樱花粉 */
+  --primary: #ee9292; /* 樱花粉 */
   --primary-foreground: #ffffff;
   
   /* 为了兼容旧代码中的 --fg 和 --bg 变量，建立映射 */
   --fg: var(--primary);
-  --fg-dark: #d4183d;
+  --fg-dark: #bc6060;
   --fg-light: rgba(232, 158, 179, 0.12);
   --bg: var(--background);
 }

@@ -4,17 +4,323 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>怎么逛 - 一起去森林浴吧</title>
+  
   <link rel="stylesheet" href="../css/themes.css">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 开启平滑滚动 */
+    html { scroll-behavior: smooth; }
+
+    /* === 全新分级导览布局 === */
+    .guide-wrapper {
+      display: flex;
+      gap: 50px;
+      margin-top: 30px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    /* --- 左侧边栏 --- */
+    .guide-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px; /* 距离顶部的吸顶距离，避开导航栏 */
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    /* 隐藏侧边栏滚动条 */
+    .guide-sidebar::-webkit-scrollbar { width: 4px; }
+    .guide-sidebar::-webkit-scrollbar-thumb { background: var(--soil-light); border-radius: 4px; }
+
+    .sidebar-group { margin-bottom: 32px; }
+    
+    .sidebar-title {
+      font-family: var(--font-hand);
+      font-size: 26px;
+      color: var(--fg);
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .sidebar-link {
+      display: block;
+      padding: 8px 16px;
+      margin-bottom: 4px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--soil);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .sidebar-link:hover, .sidebar-link.active {
+      background: var(--fg-light);
+      color: var(--fg);
+      font-weight: 700;
+      padding-left: 20px;
+    }
+
+    .sidebar-link::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--fg);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .sidebar-link:hover::before, .sidebar-link.active::before { opacity: 1; }
+
+    /* --- 右侧内容区 --- */
+    .guide-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* 每一个独立的小节 */
+    .content-section {
+      /* 为锚点跳转预留顶部空间，避免被固定的 navbar 遮挡 */
+      scroll-margin-top: 110px; 
+      margin-bottom: 70px;
+    }
+
+    .section-header {
+      border-bottom: 2px dashed var(--soil-faint);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+
+    /* 推荐卡片横幅 */
+    .recommend-banner {
+      background: linear-gradient(135deg, var(--fg-light) 0%, rgba(253,251,247,0.5) 100%);
+      border-left: 6px solid var(--fg);
+      padding: 24px 30px;
+      border-radius: 0 16px 16px 0;
+      margin-bottom: 50px;
+    }
+
+    /* ==========================================
+       子模块内容专属排版样式 (引言、原理、卡片)
+       ========================================== */
+    .module-intro {
+      background: var(--fg-light);
+      border-radius: 16px 4px 16px 4px;
+      padding: 24px 28px;
+      margin-bottom: 36px;
+      position: relative;
+      border: 1px solid var(--fg);
+    }
+    .module-intro::before {
+      content: "“";
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      font-family: serif;
+      font-size: 64px;
+      color: var(--fg);
+      opacity: 0.2;
+      line-height: 1;
+    }
+
+    .module-principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .principle-item {
+      background: rgba(255,255,255,0.4);
+      border: 2px dashed var(--soil-light);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: transform 0.2s;
+    }
+    .principle-item:hover {
+      transform: translateY(-2px);
+      background: #fff;
+      border-style: solid;
+      border-color: var(--fg);
+    }
+    
+    .exercise-group-title {
+      font-family: var(--font-hand);
+      font-size: 22px;
+      color: var(--fg);
+      margin: 0 0 16px 0;
+      padding-left: 14px;
+      border-left: 4px solid var(--fg);
+    }
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .exercise-card {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 4px 16px var(--soil-faint);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    .exercise-card h5 {
+      margin: 0 0 8px 0;
+      font-size: 17px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .module-tips {
+      background: var(--yellow);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-top: 48px;
+      box-shadow: 4px 4px 0 var(--soil-faint);
+    }
+    .module-tips ul {
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .module-tips li {
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 24px;
+      font-size: 15px;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    .module-tips li::before {
+      content: "💡";
+      position: absolute;
+      left: 0;
+      top: 2px;
+    }
+    /* ==========================================
+       视频教程卡片专属样式
+       ========================================== */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+    .video-card {
+      display: block;
+      text-decoration: none;
+      background: var(--bg);
+      border: 2px solid var(--soil-faint);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .video-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--fg);
+      box-shadow: 0 12px 24px var(--soil-faint);
+    }
+    .video-cover {
+      height: 160px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      background-color: var(--soil-light);
+    }
+    /* 悬浮在封面上的播放按钮 */
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--fg);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+    .video-card:hover .video-play-btn {
+      background: var(--fg);
+      color: #fff;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    .video-info {
+      padding: 16px 20px;
+    }
+    .video-info h5 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+    .video-info p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--soil);
+      line-height: 1.5;
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 850px) {
+      .guide-wrapper { flex-direction: column; gap: 30px; }
+      .guide-sidebar { 
+        position: static; 
+        width: 100%; 
+        max-height: none; 
+        display: flex; 
+        overflow-x: auto; 
+        padding-bottom: 10px;
+      }
+      .sidebar-group { margin-bottom: 0; margin-right: 24px; flex-shrink: 0; }
+    }
+  </style>
+
+  <script>
+    (function() {
+      try {
+        const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+        const savedTheme = localStorage.getItem('forest-theme');
+        let themeIdx = parseInt(savedTheme);
+        if (isNaN(themeIdx) || themeIdx < 0 || themeIdx >= themeClasses.length) { themeIdx = 0; }
+        document.documentElement.classList.add(themeClasses[themeIdx]);
+      } catch (e) {
+        document.documentElement.classList.add('theme-spring');
+      }
+    })();
+  </script>
 </head>
+
 <body style="margin: 0; padding: 0; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column;">
 
 <nav class="navbar" style="background: rgba(253, 251, 247, 0.75); backdrop-filter: blur(10px);">
   <a href="Home.html" class="navbar-logo">
-    <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+    <img src="../imgs/logo1.png" class="navbar-logo-icon" alt="logo">
+    一起去森林浴吧～
   </a>
 
   <div class="navbar-actions">
@@ -28,114 +334,269 @@
     <div class="navbar-season" title="轻轻拨动季节">
       <div class="season-toggle" id="season-toggle-container"></div>
     </div>
-
     <div class="navbar-tag">🌳 今日宜·发呆</div>
   </div>
 </nav>
 
-  <div class="page-container" style="flex: 1;">
-    <div class="page-header">
-      <h1 class="text-large" style="margin: 0;">6 种森林漫步指南</h1>
-      <span style="font-size: 28px;">🐌</span>
-    </div>
+<div class="page-container" style="flex: 1; padding-top: 30px;">
 
-    <p class="text-body" style="margin: 0 0 48px; max-width: 560px; opacity: 0.85;">
-      没有门槛，没有装备要求。六种方式，总有一种适合今天的你。
-    </p>
-
-    <div id="guide-list" style="display: flex; flex-direction: column; gap: 20px;">
+  <div class="guide-wrapper">
+    
+    <aside class="guide-sidebar">
+      <div class="sidebar-group">
+        <h3 class="sidebar-title">即刻指南</h3>
+        <a href="#recommend" class="sidebar-link">即刻开始</a>
       </div>
 
-    <section style="padding: 60px 0 40px;">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 28px;">
-        <h2 class="text-medium" style="margin: 0;">🌱 新手注意事项</h2>
+      <div class="sidebar-group">
+        <h3 class="sidebar-title">漫步指南 </h3>
+        <a href="#sense-visual" class="sidebar-link">视觉</a>
+        <a href="#sense-audio" class="sidebar-link">听觉</a>
+        <a href="#sense-touch" class="sidebar-link">触觉</a>
+        <a href="#sense-smell" class="sidebar-link">嗅觉</a>
+        <a href="#sense-taste" class="sidebar-link">味觉</a>
       </div>
-      <div id="beginner-tips-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+
+      <div class="sidebar-group">
+        <h3 class="sidebar-title">进阶锦囊</h3>
+        <a href="#adv-mindful" class="sidebar-link">正念观察</a>
+        <a href="#adv-art" class="sidebar-link">自然艺术</a>
+        <a href="#adv-rain" class="sidebar-link">雨天疗愈</a>
+        <a href="#adv-soil" class="sidebar-link">触摸土壤</a>
+        <a href="#adv-empathy" class="sidebar-link">共情自然</a>
+        <a href="#adv-tree" class="sidebar-link">树放松</a>
+      </div>
+
+      <div class="sidebar-group">
+        <h3 class="sidebar-title">视频教程 </h3>
+        <a href="#video-tutorials" class="sidebar-link">推荐视频</a>
+      </div>
+    </aside>
+    
+    <main class="guide-content">
+      
+<section id="recommend" class="content-section">
+        <div class="section-header">
+          <h2 class="text-large" style="margin: 0;">即刻开始</h2>
         </div>
-    </section>
-
-    <div style="text-align: center; padding: 40px 20px 80px; border-top: 2px dashed var(--soil-faint);">
-      <div style="font-size: 40px; margin-bottom: 16px;">🌳</div>
-      <p class="text-caption-hand" style="margin: 0 auto; max-width: 500px; line-height: 2; font-family: 'Caveat', cursive; font-size: 22px; color: var(--soil);">
-        "森林不在乎你走多快，也不在乎你有没有目标。<br />它只是在那里，等你来。"
-      </p>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="footer-leaves">🌱 🌿 🍃 🌾 🌿 🌱</div>
-    <p class="text-small" style="margin: 0; opacity: 0.6;">
-      一起去森林浴吧～ · 随时开始，即刻放松
-    </p>
-  </footer>
-
-  <script src="../data.js"></script>
-
-  <script>
-    // 页面内局部数据
-    const BEGINNER_TIPS = [
-      { icon: "🕐", text: "从 20 分钟开始，不需要全天候" },
-      { icon: "📵", text: "手机调静音，或放包里" },
-      { icon: "☁️", text: "阴天和雨后效果更好" },
-      { icon: "🌡️", text: "舒适温度：15–25°C 最理想" },
-    ];
-
-    // 1. 渲染漫步指南列表 (GUIDE_ITEMS 来源于 ../data.js)
-    const guideListContainer = document.getElementById('guide-list');
-    guideListContainer.innerHTML = GUIDE_ITEMS.map(item => `
-      <div class="guide-card">
-        <div class="num-badge">${item.id}</div>
-        <div style="flex: 1; min-width: 0;">
-          <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap;">
-            <h3 class="text-medium" style="margin: 0;">${item.title}</h3>
-            <span class="text-caption-hand" style="color: var(--soil); opacity: 0.8;">${item.subtitle}</span>
+        
+        <div class="recommend-banner" style="margin-bottom: 0; padding: 30px 35px;">
+          <p class="text-caption-hand" style="font-size: 24px; color: var(--text-dark); margin: 0 0 20px;">
+            "随便找一处公园就可以开始~"
+          </p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+            <p class="text-small" style="color: var(--soil); margin: 0; opacity: 0.9; display: flex; align-items: flex-start; gap: 10px;">
+              <span style="font-size: 18px;">📵</span> 
+              <span><strong>手机静音：</strong>放进包里，给自己 20 分钟完全断网的专属时刻。</span>
+            </p>
+            <p class="text-small" style="color: var(--soil); margin: 0; opacity: 0.9; display: flex; align-items: flex-start; gap: 10px;">
+              <span style="font-size: 18px;">🐢</span> 
+              <span><strong>放慢脚步：</strong>降至平时步速的三分之一，慢慢感受脚跟到脚尖接触地面的过程。</span>
+            </p>
+            <p class="text-small" style="color: var(--soil); margin: 0; opacity: 0.9; display: flex; align-items: flex-start; gap: 10px;">
+              <span style="font-size: 18px;">🌬️</span> 
+              <span><strong>深长呼吸：</strong>做三次深呼吸，把注意力集中在空气经过鼻腔时的微凉感上。</span>
+            </p>
           </div>
-          <p class="text-body" style="margin: 0 0 10px;">${item.description}</p>
-          <span style="display: inline-flex; align-items: center; gap: 6px; background: var(--fg-light); border-radius: 20px; padding: 4px 14px; font-family: 'Caveat', cursive; font-size: 16px; color: var(--fg);">
-            💡 ${item.tip}
-          </span>
+
+          <p class="text-small" style="color: var(--soil); opacity: 0.6; margin: 0 0 24px 0; font-size: 13px; border-left: 2px solid var(--soil-faint); padding-left: 12px; line-height: 1.6;">
+            注：如果想要了解更多详情可以阅读下方<strong>漫步指南</strong>，<br>想要更多尝试，可以看看侧边栏中的<strong>进阶锦囊</strong>。
+          </p>
+
+          <div style="margin-top: 10px; padding-top: 24px; border-top: 1px dashed var(--soil-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 200px;">
+              <h4 style="margin: 0 0 4px 0; font-size: 17px; color: var(--fg);">准备好了吗？</h4>
+              <p class="text-small" style="margin: 0; color: var(--soil); opacity: 0.8;">
+                去发现离你最近的那片绿，我们在地图上为你标记了多处宝藏地。
+              </p>
+            </div>
+            
+            <a href="MapPage.html" style="text-decoration: none; color: var(--fg); font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;" 
+               onmouseover="this.style.gap='12px'; this.style.opacity='0.8';" 
+               onmouseout="this.style.gap='6px'; this.style.opacity='1';">
+              去寻找附近的森林 <span style="font-size: 20px; line-height: 1;">→</span>
+            </a>
+          </div>
+          
         </div>
-        <div class="guide-icon-box">${item.icon}</div>
-      </div>
+      </section>
+
+      <div id="dynamic-guide-container"></div>
+
+    </main>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" title="回到顶部">
+    <span>↑</span>
+</button>
+
+<script src="../data.js"></script>
+
+<script>
+  // === 全局主题同步逻辑 ===
+  const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+  const toggleContainer = document.getElementById('season-toggle-container');
+
+  function renderTheme(idx) {
+    localStorage.setItem('forest-theme', idx);
+    document.body.classList.remove(...themeClasses);
+    document.body.classList.add(themeClasses[idx]);
+    
+    if (toggleContainer && typeof SEASONS !== 'undefined') {
+      toggleContainer.innerHTML = SEASONS.map((s, i) => `
+        <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
+          <span style="font-size: 20px;">${s.icon}</span>
+        </button>
+      `).join('');
+    }
+  }
+
+  // === 动态渲染深度漫步指南内容 ===
+  function renderGuideDetails() {
+    const container = document.getElementById('dynamic-guide-container');
+    if (!container || typeof GUIDE_DETAILS === 'undefined') return;
+
+    const htmlStr = GUIDE_DETAILS.map(section => `
+      <section id="${section.id}" class="content-section">
+        
+        <div class="section-header">
+          <h2 class="text-large" style="margin: 0;">${section.title}</h2>
+        </div>
+
+        ${section.intro ? `
+        <div class="module-intro">
+          <p class="text-body" style="margin: 0; font-size: 15px; color: var(--text-dark); z-index: 1; position: relative;">
+            ${section.intro}
+          </p>
+        </div>` : ''}
+
+        ${section.principles && section.principles.length > 0 ? `
+        <h3 class="text-medium" style="margin: 0 0 20px 0;">疗愈原理</h3>
+        <div class="module-principles">
+          ${section.principles.map((p, idx) => `
+            <div class="principle-item">
+              <span style="font-family: var(--font-hand); font-size: 24px; color: var(--fg); opacity: 0.5;">0${idx+1}</span>
+              <p class="text-body" style="margin: 0; font-size: 14px; line-height: 1.6;">${p}</p>
+            </div>
+          `).join('')}
+        </div>` : ''}
+
+
+        ${section.exerciseGroups && section.exerciseGroups.length > 0 ? `
+        <h3 class="text-medium" style="margin: 0 0 24px 0;">核心练习方法</h3>
+        ${section.exerciseGroups.map(group => `
+          <div style="margin-bottom: 32px;">
+            <h4 class="exercise-group-title">${group.groupName}</h4>
+            <div class="exercise-grid">
+              ${group.exercises.map(ex => `
+                <div class="exercise-card">
+                  <h5><span style="color: var(--fg);">🌿</span> ${ex.name}</h5>
+                  <p class="text-body" style="margin: 0; font-size: 15px;">${ex.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}` : ''}
+
+        ${section.tips && section.tips.length > 0 ? `
+        <div class="module-tips">
+          <h3 class="text-medium" style="margin: 0 0 16px 0; color: var(--text-dark);">实用小贴士</h3>
+          <ul>
+            ${section.tips.map(tip => `<li>${tip}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${section.videos && section.videos.length > 0 ? `
+        <h3 class="text-medium" style="margin: 32px 0 16px 0;">推荐视频</h3>
+        <div class="video-grid">
+          ${section.videos.map(vid => `
+            <a href="${vid.url}" target="_blank" class="video-card">
+              <div class="video-cover" style="background-image: url('${vid.cover}')">
+                <div class="video-play-btn">▶</div>
+              </div>
+              <div class="video-info">
+                <h5>${vid.title}</h5>
+                <p>${vid.desc}</p>
+              </div>
+            </a>
+          `).join('')}
+        </div>` : ''}
+
+      </section>
     `).join('');
 
-    // 2. 渲染新手注意事项
-    const beginnerTipsContainer = document.getElementById('beginner-tips-list');
-    beginnerTipsContainer.innerHTML = BEGINNER_TIPS.map(tip => `
-      <div class="hand-card" style="padding: 20px 22px; display: flex; gap: 14px; align-items: flex-start;">
-        <span style="font-size: 26px; line-height: 1.2;">${tip.icon}</span>
-        <p class="text-body" style="margin: 0; line-height: 1.6;">
-          ${tip.text}
-        </p>
-      </div>
-    `).join('');
-    // ==========================================
-    // 全局主题同步逻辑 (无背景大图版)
-    // ==========================================
-    const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
-    const toggleContainer = document.getElementById('season-toggle-container');
+    container.innerHTML = htmlStr;
+  }
 
-    function renderTheme(idx) {
-      // 1. 保存选择
-      localStorage.setItem('forest-theme', idx);
-      
-      // 2. 切换 Body 类名
-      document.body.classList.remove(...themeClasses);
-      document.body.classList.add(themeClasses[idx]);
-      
-      // 3. 重新渲染按钮高亮状态
-      if (toggleContainer) {
-        toggleContainer.innerHTML = SEASONS.map((s, i) => `
-          <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
-            <span style="font-size: 20px;">${s.icon}</span>
-          </button>
-        `).join('');
-      }
+  // 1. 先执行动态渲染
+  renderGuideDetails();
+
+  // 2. 初始化主题
+  const currentThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+  renderTheme(currentThemeIdx);
+
+  // 3. 最后挂载侧边栏滚动监听逻辑
+  document.addEventListener('DOMContentLoaded', () => {
+    // 稍微延迟确保 DOM 已经完全生成
+    setTimeout(() => {
+      const sections = document.querySelectorAll('.content-section');
+      const navLinks = document.querySelectorAll('.sidebar-link');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        const scrollY = window.pageYOffset;
+
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          if (scrollY >= (sectionTop - 150)) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+          }
+        });
+      });
+    }, 100); 
+  });
+// === 回到顶部功能 (修复版) ===
+  (function initBackToTop() {
+    const btn = document.getElementById('backToTop');
+    
+    if (!btn) {
+      console.error("未找到 id 为 'backToTop' 的按钮，请检查 HTML 结构");
+      return;
     }
 
-    // 初始化读取本地缓存主题
-    const currentThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
-    renderTheme(currentThemeIdx);
-  </script>
+    // 监听滚动事件
+    window.addEventListener('scroll', () => {
+      // 兼容不同浏览器的滚动高度获取方式
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      
+      // 调试用：如果在 F12 看到这个数字在变化，说明监听成功
+      // console.log("当前滚动高度:", scrollTop);
+
+      if (scrollTop > 400) {
+        btn.classList.add('show');
+      } else {
+        btn.classList.remove('show');
+      }
+    });
+
+    // 点击事件
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  })();
+</script>
 </body>
 </html>

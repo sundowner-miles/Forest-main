@@ -9,7 +9,15 @@
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Gaegu&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  
+  <script>
+    // 抢在页面渲染前，提前把主题 class 加到 html 或 body 上，彻底消除闪烁
+    (function() {
+      const themeClasses = ['theme-spring', 'theme-summer', 'theme-autumn', 'theme-winter'];
+      const savedThemeIdx = localStorage.getItem('forest-theme') ? parseInt(localStorage.getItem('forest-theme')) : 0;
+      // 直接把 class 塞给最外层的 <html> 节点
+      document.documentElement.className = themeClasses[savedThemeIdx];
+    })();
+  </script>
   <style>
     /* ==========================================
        沉浸式模式专属样式
@@ -166,6 +174,41 @@
     .bar:nth-child(2) { animation-delay: 0.2s; }
     .bar:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounce { from { height: 3px; } to { height: 12px; } }
+
+    /* ==========================================
+   底部切换场景按钮样式 (毛玻璃风格)
+   ========================================== */
+    .next-scene-btn {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 30, 30, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: auto;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .next-scene-btn:hover {
+      background: rgba(60, 60, 60, 0.7);
+      color: #fff;
+      /* transform: translateX(-50%) scale(1.05); */
+      border-color: rgba(255, 255, 255, 0.3);
+    }
   </style>
 </head>
 <body style="min-height: 100vh; display: flex; flex-direction: column;">
@@ -173,7 +216,9 @@
   <div id="nav-trigger"></div>
   <nav class="navbar" style="background: rgba(253, 251, 247, 0.85); backdrop-filter: blur(10px);">
     <a href="Home.html" class="navbar-logo">
-      <span class="navbar-logo-icon">🌿</span>一起去森林浴吧～
+      <!-- 删掉🌿表情，换成自定义图片 -->
+      <img src="../imgs/logo1.png" class="navbar-logo-icon" alt="logo">
+      一起去森林浴吧～
     </a>
     <div class="navbar-actions">
       <ul class="navbar-links">
@@ -208,8 +253,8 @@
       <span id="window-user" class="text-small" style="opacity: 0.9; text-shadow: 1px 1px 6px rgba(0,0,0,0.8);"></span>
     </div>
 
-    <button onclick="nextScene()" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); color: #2c3e50; border: none; padding: 14px 32px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.2); backdrop-filter: blur(10px); transition: transform 0.2s, background 0.2s; pointer-events: auto; display: flex; align-items: center; gap: 8px; z-index: 10;" onmouseover="this.style.background='#fff'; this.style.transform='translateX(-50%) scale(1.03)'" onmouseout="this.style.background='rgba(255,255,255,0.85)'; this.style.transform='translateX(-50%) scale(1)'">
-      换个地方逛逛 🌲
+    <button class="next-scene-btn" onclick="nextScene()">
+      <span style="font-size: 18px; line-height: 1;">🌲</span> 换个地方逛逛
     </button>
   </div>
 
@@ -253,7 +298,7 @@
       <div class="playing-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
     </div>
     <div class="sound-list-item" onclick="selectSound(2, this)">
-      <div class="s-label"><span>🐦</span> 清晰鸟鸣</div>
+      <div class="s-label"><span>🕊️</span> 清晰鸟鸣</div>
       <div class="playing-bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
     </div>
     <div class="sound-list-item" onclick="selectSound(3, this)">
@@ -279,15 +324,39 @@
 
   <div id="submit-modal" class="modal-overlay" style="display: none;" onclick="handleOverlayClick(event)">
     <div class="modal-box">
-      <button class="sound-btn" title="播放白噪音">
+      <!-- <button class="sound-btn" title="播放白噪音">
         <span id="sound-btn-icon">🔊</span>
-      </button>
+      </button> -->
       <div id="modal-success-view" style="display: none; text-align: center; padding: 20px 0;">
-        <div style="font-size: 56px; margin-bottom: 16px;">🌿</div><h3 class="text-medium">谢谢你的分享！</h3>
+        <div style="font-size: 56px; margin-bottom: 16px;">🌿</div>
+        <h3 class="text-medium" style="margin: 0 0 10px;">谢谢你的分享！</h3>
+        <p class="text-body" style="margin: 0; opacity: 0.8;">
+          你的森林窗景已收到，<br />正在种植进地图里～
+        </p>
       </div>
       <form id="submit-form" onsubmit="handleFormSubmit(event)">
-        <h3 class="text-medium" style="margin: 0 0 6px; color: var(--fg);">📌 投稿我的窗外</h3>
-        <button class="btn-primary" type="button" style="width: 100%; justify-content: center; margin-top: 4px;" onclick="handleFormSubmit(event)">🌱 种下这扇窗</button>
+        <h3 class="text-medium" style="margin: 0 0 6px; color: var(--fg);">📌 投稿我的森林</h3>
+        <p class="text-small" style="margin: 0 0 24px; opacity: 0.7;">分享你镜头里的森林，让更多人看见</p>
+
+        <div class="form-group">
+          <label class="form-label">昵称</label>
+          <input class="form-input" type="text" placeholder="云游仙人 / Tomo ..." required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">地点</label>
+          <input class="form-input" type="text" placeholder="北京香山 / 京都岚山 ..." required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">图片链接 (可选)</label>
+          <input class="form-input" type="url" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">一句话描述</label>
+          <textarea class="form-input" rows="3" placeholder="那天风很轻，树叶在说话..." required></textarea>
+        </div>
+        <button class="btn-primary" type="submit" style="width: 100%; justify-content: center; margin-top: 4px;">
+          🌱 种下这扇窗
+        </button>
       </form>
     </div>
   </div>
@@ -295,7 +364,18 @@
   <script src="../data.js"></script>
   <script>
     // === 修复滚动条消失导致的元素偏移问题 ===
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    function getScrollbarWidth() {
+      // 创建一个带有滚动条的隐藏 div 来测量真实的滚动条宽度
+      const scrollDiv = document.createElement('div');
+      scrollDiv.style.cssText = 'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;';
+      document.body.appendChild(scrollDiv);
+      const scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+      document.body.removeChild(scrollDiv);
+      return scrollbarWidth;
+    }
+
+    const scrollbarWidth = getScrollbarWidth();
+
     if (scrollbarWidth > 0) { // 如果存在实体滚动条 (如 Windows 系统)
       // 1. 补偿导航栏的右侧内边距
       document.querySelector('.navbar').style.paddingRight = `calc(clamp(20px, 5vw, 40px) + ${scrollbarWidth}px)`;
