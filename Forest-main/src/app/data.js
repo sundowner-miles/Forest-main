@@ -54,51 +54,6 @@ const GUIDE_ITEMS = [
   },
 ];
 
-// ── Window Scenes ────────────────────────────────────────────
-// const WINDOW_SCENES = [
-//   {
-//     id: 1,
-//     url: "../素材/上海-共青.mp4",
-//     location: "上海 共青森林公园", /* 我顺手帮你把文案改贴切了一点，你也可以按需改回 */
-//     caption: "晨雾在竹尖打转，像是大地在轻轻呼吸。",
-//     user: "Tomo · 上海"
-//   },
-//   {
-//     id: 2,
-//     url: "../素材/武汉-植物园.mp4",
-//     location: "武汉 植物园",
-//     caption: "樱花落下的速度，刚好够你忘掉烦恼。",
-//     user: "春风 · 奈良"
-//   },
-//   {
-//     id: 3,
-//     url: "../素材/上海-共青 (5).jpg",
-//     location: "西双版纳热带雨林",
-//     caption: "叶片大到可以躲雨，世界变得简单又美好。",
-//     user: "野生鱼 · 云南"
-//   },
-//   {
-//     id: 4,
-//     url: "../素材/上海-共青 (2).jpg",
-//     location: "长白山红叶谷",
-//     caption: "秋天把颜料全打翻了，真好。",
-//     user: "橙子 · 吉林"
-//   },
-//   {
-//     id: 5,
-//     url: "../素材/上海-共青 (3).jpg",
-//     location: "北海道旭川",
-//     caption: "雪压松枝，静得只剩自己的心跳。",
-//     user: "雪人 · 北海道"
-//   },
-//   {
-//     id: 6,
-//     url: "../素材/上海-共青 (4).jpg",
-//     location: "苏州拙政园",
-//     caption: "苔藓比任何地毯都柔软，时间在这里不流动。",
-//     user: "苏苏 · 苏州"
-//   }
-// ];
 
 const WINDOW_SCENES = 
 [
@@ -143,34 +98,6 @@ const WINDOW_SCENES =
     location: "上海·共青森林公园",
     caption: "铁轨穿过林间，像通向夏天深处的秘密通道。",
     user: "拾光行者 · 上海"
-  },
-  {
-    id: 7,
-    url: "../素材/温州-江心屿 (3).jpg",
-    location: "温州·江心屿",
-    caption: "银杏和芦苇在风里摇晃，像在和秋天打招呼。",
-    user: "瓯江客 · 温州"
-  },
-  {
-    id: 8,
-    url: "../素材/温州-江心屿 (4).jpg",
-    location: "温州·江心屿",
-    caption: "阳光穿过晨雾，把湖面照成了碎金的样子。",
-    user: "屿上清风 · 温州"
-  },
-  {
-    id: 9,
-    url: "../素材/温州-江心屿 (5).jpg",
-    location: "温州·江心屿",
-    caption: "廊檐下的光影慢慢移动，像时间在散步。",
-    user: "南塘旧梦 · 温州"
-  },
-  {
-    id: 10,
-    url: "../素材/温州-江心屿.jpg",
-    location: "温州·江心屿",
-    caption: "树影斜斜铺在水面，把湖岸线拉得很长。",
-    user: "鹿城漫步 · 温州"
   },
   {
     id: 11,
@@ -411,13 +338,6 @@ const WINDOW_SCENES =
     user: "风栖林间 · 上海"
   },
   {
-    id: 45,
-    url: "../素材/温州-江心屿.mp4",
-    location: "温州·江心屿",
-    caption: "夕阳落在湖面上，把水染成了橘色。",
-    user: "夕照江心 · 温州"
-  },
-  {
     id: 46,
     url: "../素材/武汉-东湖 (2).mp4",
     location: "武汉·东湖风景区",
@@ -488,7 +408,6 @@ const WINDOW_SCENES =
     user: "草木集 · 武汉"
   }
 ];
-
 // === 白噪音播放逻辑 ===
 // 路径必须与你的本地文件夹结构一致，这里假设 HTML 在 pages 文件夹，素材在上一级的素材文件夹
 // ── White Noise (白噪音数据) ──────────────────────────────────
@@ -585,7 +504,7 @@ const PARKS = [
 const SEASONS = [
   {
     key: "spring",
-    icon: "🌸",
+    icon: "../imgs/春.png", // ⚠️ 替换为你的春季图标图片路径
     label: "春",
     name: "春 · 樱",
     bg: "../imgs/春.jpg",
@@ -593,7 +512,7 @@ const SEASONS = [
   },
   {
     key: "summer",
-    icon: "🌿",
+    icon: "../imgs/夏.png", // ⚠️ 替换为你的夏季图标图片路径
     label: "夏",
     name: "夏 · 绿",
     bg: "../imgs/夏.jpg",
@@ -601,7 +520,7 @@ const SEASONS = [
   },
   {
     key: "autumn",
-    icon: "🍂",
+    icon: "../imgs/秋.png", // ⚠️ 替换为你的秋季图标图片路径
     label: "秋",
     name: "秋 · 枫",
     bg: "../imgs/秋1.jpg",
@@ -610,7 +529,7 @@ const SEASONS = [
   },
   {
     key: "winter",
-    icon: "❄️",
+    icon: "../imgs/冬.png", // ⚠️ 替换为你的冬季图标图片路径
     label: "冬",
     name: "冬 · 雪",
     bg: "../imgs/冬.jpg",
