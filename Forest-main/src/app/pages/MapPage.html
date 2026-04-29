@@ -18,6 +18,7 @@
       document.documentElement.className = themeClasses[savedThemeIdx];
     })();
   </script>
+  
   <style>
     /* ==========================================
        ✨ 进阶魔法：地图四季换肤变量
@@ -98,22 +99,37 @@
     </div>
 
     <div class="navbar-tag">🌳 今日宜·发呆</div>
+    <button class="navbar-mobile-btn" onclick="toggleMobileMenu()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
   </div>
 </nav>
 
   <div class="page-container" style="flex: 1; display: flex; flex-direction: column; max-width: 96%; width: 100%; padding: 30px 0 50px;">
     
-    <div class="map-outer" style="flex: 1; min-height: 75vh; width: 100%; position: relative; border-radius: 24px; overflow: hidden; border: none; box-shadow: 0 25px 60px var(--fg-light), 0 4px 15px rgba(0,0,0,0.03);" onclick="setActiveId(null)">
+    <style>
+      /* 隐藏横向滚动条，让滑动更纯粹沉浸 */
+      .map-scroll-container::-webkit-scrollbar { display: none; }
+      .map-scroll-container { scrollbar-width: none; -ms-overflow-style: none; }
+    </style>
+
+    <div class="map-outer-wrapper" style="flex: 1; position: relative; width: 100%; min-height: 75vh; border-radius: 24px; box-shadow: 0 25px 60px var(--fg-light), 0 4px 15px rgba(0,0,0,0.03); overflow: hidden;">
       
-      <div id="svg-map-layer" style="position: absolute; inset: 0;"></div>
-      
-      <div id="markers-layer" style="position: absolute; inset: 0; pointer-events: none;"></div>
-      <div id="bubble-layer" style="position: absolute; inset: 0; pointer-events: none; z-index: 15;"></div>
+      <div class="map-scroll-container" style="width: 100%; height: 100%; min-height: 75vh; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;" onclick="setActiveId(null)">
+        
+        <div class="map-canvas" style="min-width: 1000px; height: 100%; min-height: 75vh; position: relative;">
+          <div id="svg-map-layer" style="position: absolute; inset: 0;"></div>
+          <div id="markers-layer" style="position: absolute; inset: 0; pointer-events: none;"></div>
+          <div id="bubble-layer" style="position: absolute; inset: 0; pointer-events: none; z-index: 15;"></div>
+        </div>
+
+      </div>
 
       <div style="position: absolute; bottom: 32px; left: 32px; z-index: 10; background: rgba(253,251,247,0.9); border: 1.5px dashed var(--soil-light); border-radius: 16px 4px 16px 4px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(166,138,107,0.05);" onclick="event.stopPropagation()">
         <span style="font-size: 20px;">🧍</span>
         <span class="text-small" style="font-weight: 700; color: var(--fg); margin: 0;">你的位置</span>
       </div>
+      
     </div>
 
     <div style="text-align: center; margin-top: 24px;">

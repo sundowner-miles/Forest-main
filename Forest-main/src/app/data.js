@@ -1109,3 +1109,22 @@ const GUIDE_DETAILS = [
     }, 1000); 
   });
 })();
+
+// === 移动端导航栏展开/折叠逻辑 ===
+  window.toggleMobileMenu = function() {
+    const navLinks = document.querySelector('.navbar-links');
+    if (navLinks) {
+      navLinks.classList.toggle('open');
+    }
+  };
+
+  // 点击页面其他空白区域时，自动收起移动端菜单
+  document.addEventListener('click', function(event) {
+    const navLinks = document.querySelector('.navbar-links');
+    const mobileBtn = document.querySelector('.navbar-mobile-btn');
+    
+    // 如果菜单是打开的，并且点击的位置不在菜单和按钮内部
+    if (navLinks && navLinks.classList.contains('open') && !navLinks.contains(event.target) && !mobileBtn.contains(event.target)) {
+      navLinks.classList.remove('open');
+    }
+  });
