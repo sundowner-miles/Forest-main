@@ -119,9 +119,11 @@
       transform: scale(1.08);
     }
     .filter-item .f-icon { 
-      font-size: 26px; 
-      line-height: 1; 
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      width: 32px;  /* 如果觉得图片太小，可以把这里和下面的 height 改大，比如 32px */
+      height: 32px;
+      object-fit: contain; /* 保证图片等比例缩放不拉伸 */
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); /* 保留原有的好看的悬浮阴影 */
+      transition: transform 0.2s ease;
     }
     .filter-item .f-text { 
       font-family: 'Quicksand', sans-serif; 
@@ -264,25 +266,25 @@
     </div>
     <div class="filter-content">
       <div class="filter-item active" data-tag="all" onclick="applyFilter('all', this)">
-        <span class="f-icon">🌍</span><span class="f-text">全部</span>
+        <img src="../imgs/地球.png" alt="全部" class="f-icon"><span class="f-text">全部</span>
       </div>
       <div class="filter-item" data-tag="spring" onclick="applyFilter('spring', this)">
-        <span class="f-icon">🌸</span><span class="f-text">春</span>
+        <img src="../imgs/春.png" alt="春" class="f-icon"><span class="f-text">春</span>
       </div>
       <div class="filter-item" data-tag="summer" onclick="applyFilter('summer', this)">
-        <span class="f-icon">🌿</span><span class="f-text">夏</span>
+        <img src="../imgs/夏.png" alt="夏" class="f-icon"><span class="f-text">夏</span>
       </div>
       <div class="filter-item" data-tag="autumn" onclick="applyFilter('autumn', this)">
-        <span class="f-icon">🍁</span><span class="f-text">秋</span>
+        <img src="../imgs/秋.png" alt="秋" class="f-icon"><span class="f-text">秋</span>
       </div>
       <div class="filter-item" data-tag="winter" onclick="applyFilter('winter', this)">
-        <span class="f-icon">❄️</span><span class="f-text">冬</span>
+        <img src="../imgs/冬.png" alt="冬" class="f-icon"><span class="f-text">冬</span>
       </div>
       <div class="filter-item" data-tag="sunny" onclick="applyFilter('sunny', this)">
-        <span class="f-icon">☀️</span><span class="f-text">晴</span>
+        <img src="../imgs/晴.png" alt="晴" class="f-icon"><span class="f-text">晴</span>
       </div>
       <div class="filter-item" data-tag="rainy" onclick="applyFilter('rainy', this)">
-        <span class="f-icon">🌧️</span><span class="f-text">雨</span>
+        <img src="../imgs/雨.png" alt="雨" class="f-icon"><span class="f-text">雨</span>
       </div>
     </div>
   </div>
@@ -381,10 +383,10 @@
       document.querySelector('.navbar').style.paddingRight = `calc(clamp(20px, 5vw, 40px) + ${scrollbarWidth}px)`;
       
       // 2. 为了追求完美，把右上角的地点标签、右侧折叠面板、右下角按钮也往左推回原位
-      document.getElementById('window-location').style.right = `${24 + scrollbarWidth}px`;
-      document.querySelector('.filter-panel').style.right = `${scrollbarWidth}px`;
-      document.querySelector('.sound-control').style.right = `${104 + scrollbarWidth}px`;
-      document.querySelector('.fullscreen-btn').style.right = `${36 + scrollbarWidth}px`;
+      // document.getElementById('window-location').style.right = `${24 + scrollbarWidth}px`;
+      // document.querySelector('.filter-panel').style.right = `${scrollbarWidth}px`;
+      // document.querySelector('.sound-control').style.right = `${104 + scrollbarWidth}px`;
+      // document.querySelector('.fullscreen-btn').style.right = `${36 + scrollbarWidth}px`;
     }
     function shuffleArray(arr) { return [...arr].sort(() => Math.random() - 0.5); }
     
@@ -611,7 +613,7 @@
       if (toggleContainer && typeof SEASONS !== 'undefined') {
         toggleContainer.innerHTML = SEASONS.map((s, i) => `
           <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
-            <span style="font-size: 20px;">${s.icon}</span>
+            <img src="${s.icon}" alt="${s.label}" style="width: 24px; height: 24px; object-fit: contain;">
           </button>
         `).join('');
       }

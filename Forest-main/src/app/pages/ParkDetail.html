@@ -291,7 +291,7 @@
       if (toggleContainer) {
         toggleContainer.innerHTML = SEASONS.map((s, i) => `
           <button class="season-btn ${i === idx ? 'active' : ''}" onclick="renderTheme(${i})" style="cursor: pointer;">
-            <span style="font-size: 20px;">${s.icon}</span>
+            <img src="${s.icon}" alt="${s.label}" style="width: 24px; height: 24px; object-fit: contain;">
           </button>
         `).join('');
       }
